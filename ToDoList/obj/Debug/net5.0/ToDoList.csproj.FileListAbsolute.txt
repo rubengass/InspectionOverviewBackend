@@ -1,0 +1,114 @@
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\appsettings.Development.json
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\appsettings.json
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.exe
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.deps.json
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.runtimeconfig.json
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.runtimeconfig.dev.json
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ref\ToDoList.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.pdb
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Microsoft.OpenApi.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\MySql.Data.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Google.Protobuf.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Zstandard.Net.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Compression.LZ4.Streams.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\BouncyCastle.Crypto.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Ubiety.Dns.Core.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Compression.LZ4.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Hash.xxHash.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\MySql.Data.xml
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.AssemblyReference.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.AssemblyInfoInputs.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.AssemblyInfo.cs
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.CoreCompileInputs.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\staticwebassets\ToDoList.StaticWebAssets.Manifest.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\staticwebassets\ToDoList.StaticWebAssets.xml
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\scopedcss\bundle\ToDoList.styles.css
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.RazorTargetAssemblyInfo.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.CopyComplete
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ref\ToDoList.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.pdb
+C:\Users\rgass\OneDrive - ManpowerGroup\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.genruntimeconfig.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\appsettings.Development.json
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\appsettings.json
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.exe
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.deps.json
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.runtimeconfig.json
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.runtimeconfig.dev.json
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ref\ToDoList.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.pdb
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Microsoft.OpenApi.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\MySql.Data.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Google.Protobuf.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Zstandard.Net.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Compression.LZ4.Streams.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\BouncyCastle.Crypto.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Ubiety.Dns.Core.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Compression.LZ4.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Hash.xxHash.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\MySql.Data.xml
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.AssemblyReference.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.AssemblyInfoInputs.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.AssemblyInfo.cs
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.CoreCompileInputs.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\staticwebassets\ToDoList.StaticWebAssets.Manifest.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\staticwebassets\ToDoList.StaticWebAssets.xml
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\scopedcss\bundle\ToDoList.styles.css
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.RazorTargetAssemblyInfo.cache
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.CopyComplete
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ref\ToDoList.dll
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.pdb
+C:\Users\rgass\OneDrive - ManpowerGroup\Documents\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.genruntimeconfig.cache
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\appsettings.Development.json
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\appsettings.json
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.exe
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.deps.json
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.runtimeconfig.json
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.runtimeconfig.dev.json
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ref\ToDoList.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\ToDoList.pdb
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Microsoft.OpenApi.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\MySql.Data.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Google.Protobuf.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Zstandard.Net.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Compression.LZ4.Streams.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\BouncyCastle.Crypto.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\Ubiety.Dns.Core.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Compression.LZ4.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\K4os.Hash.xxHash.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\bin\Debug\net5.0\MySql.Data.xml
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.AssemblyReference.cache
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.AssemblyInfoInputs.cache
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.AssemblyInfo.cs
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.CoreCompileInputs.cache
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\staticwebassets\ToDoList.StaticWebAssets.Manifest.cache
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\staticwebassets\ToDoList.StaticWebAssets.xml
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\scopedcss\bundle\ToDoList.styles.css
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.RazorTargetAssemblyInfo.cache
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.csproj.CopyComplete
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ref\ToDoList.dll
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.pdb
+C:\Users\rgass\Local Folder\InspectionOverview\InspectionOverviewBackend\ToDoList\obj\Debug\net5.0\ToDoList.genruntimeconfig.cache
