@@ -46,7 +46,7 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine("Failed to get the number of sites.");
             }

@@ -10,12 +10,12 @@ namespace ToDoList.Model
     {
         public string ContractManagerID { get; set; }
         public string ContractManagerName { get; set; }
-        public List<string> ContractManagers { get; set; }
+        public Department Department { get; set; }
 
-        public List<string> GetContractManagerNames(string DepartmentID)
+        public void GetContractManagers(int iNumber, int DepartmentID)
         {
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT ContractManager_Name FROM contractmanagers WHERE Department_Id = '" + DepartmentID + "'";
+            string query = "SELECT * FROM contractmanagers WHERE Department_Id = '" + DepartmentID + "'LIMIT " + iNumber + ",1";
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
             MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -27,10 +27,10 @@ namespace ToDoList.Model
                 reader = commandDatabase.ExecuteReader();
                 if (reader.HasRows)
                 {
-                    ContractManagers = new List<string>();
                     while (reader.Read())
                     {
-                        ContractManagers.Add(reader.GetString(0));
+                        ContractManagerID = reader.GetString(0);
+                        ContractManagerName = reader.GetString(1);
                     }
                 }
                 else
@@ -40,46 +40,10 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve ContractManagers");
             }
-            return ContractManagers;
-        }
-
-        public List<string> GetAllContractManagerNames()
-        {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT ContractManager_Name FROM contractmanagers";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    ContractManagers = new List<string>();
-                    while (reader.Read())
-                    {
-                        ContractManagers.Add(reader.GetString(0));
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
-            }
-            return ContractManagers;
         }
         public string GetContractManagerName(string ContractManagerID)
         {
@@ -108,9 +72,9 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve ContractManagerName.");
             }
             return ContractManagerName;
         }
@@ -141,9 +105,9 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve ContractManagerID");
             }
             return ContractManagerID;
         }
