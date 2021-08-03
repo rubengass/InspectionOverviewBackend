@@ -9,7 +9,7 @@ namespace ToDoList.Model
     public class SiteOverview
     {
         public List<Site> AllSites { get; set; }
-        public int NumberOfSites;
+        public int NumberOfSites { get; set; }
 
         public void FetchAllSites()
         {
@@ -51,6 +51,22 @@ namespace ToDoList.Model
                 Console.WriteLine("Failed to get the number of sites.");
             }
             return NumberOfSites;
+        }
+
+        public void FetchPaginatedSites(int NumberOfRowsMin,int NumberOfRowsMax)
+        {
+            int Maxi = NumberOfRowsMin + NumberOfRowsMax;
+            NumberOfSites = GetNumberOfSites();
+            if (NumberOfSites < Maxi){
+                Maxi = NumberOfSites;
+            }
+            AllSites = new List<Site>();
+            for (int i = NumberOfRowsMin; i < Maxi; i++)
+            {
+                Site Object = new Site();
+                Object.GetAllSiteDataWithiNumber(i);
+                AllSites.Add(Object);
+            }
         }
     }
 }
