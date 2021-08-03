@@ -13,15 +13,6 @@ namespace ToDoList.Controllers
     [ApiController]
     public class SiteOverviewController : ControllerBase
     {
-        // GET: api/<SiteController>
-        //[HttpGet]
-        //public IEnumerable<SiteOverview> Get()
-        //{
-        //    SiteOverview Overview = new SiteOverview();
-        //    Overview.FetchSiteNames();
-        //    return new SiteOverview[] { Overview };
-        //}
-
         [HttpGet]
         public IEnumerable<SiteOverview> Get()
         {
@@ -31,10 +22,12 @@ namespace ToDoList.Controllers
         }
 
         // GET api/<SiteController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("{NumberOfRowsMin:int},{NumberOfRowsMax:int}")]
+        public IEnumerable<SiteOverview> Get(int NumberOfRowsMin, int NumberOfRowsMax)
         {
-            return "value";
+            SiteOverview Overview = new SiteOverview();
+            Overview.FetchPaginatedSites(NumberOfRowsMin,NumberOfRowsMax);
+            return new SiteOverview[] { Overview };
         }
 
         // POST api/<SiteController>

@@ -10,7 +10,6 @@ namespace ToDoList.Model
     {
         public string CustomerID { get; set; }
         public string CustomerName { get; set; }
-        public List<string> Customers { get; set; }
 
         public string GetCustomerName(string CustomerID)
         {
@@ -39,12 +38,13 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve CustomerName");
             }
             return CustomerName;
         }
+
         public string GetCustomerId(string CustomerName)
         {
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
@@ -72,16 +72,17 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve CustomerID");
             }
             return CustomerID;
         }
-        public List<string> GetAllCustomerNames()
+
+        public void GetAllCustomers(int iNumber)
         {
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT Customer_Name FROM customers";
+            string query = "SELECT * FROM customers LIMIT " + iNumber + ",1";
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
             MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -93,10 +94,10 @@ namespace ToDoList.Model
                 reader = commandDatabase.ExecuteReader();
                 if (reader.HasRows)
                 {
-                    Customers = new List<string>();
                     while (reader.Read())
                     {
-                        Customers.Add(reader.GetString(0));
+                        CustomerID = reader.GetString(0);
+                        CustomerName = reader.GetString(1);
                     }
                 }
                 else
@@ -106,11 +107,10 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve Customers");
             }
-            return Customers;
         }
     }
 }

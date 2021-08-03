@@ -10,8 +10,6 @@ namespace ToDoList.Model
     {
         public string DepartmentID { get; set; }
         public string DepartmentName { get; set; }
-        public List<string> AllDepartmentNames { get; set; }
-
 
         public string GetDepartmentId(string DepartmentName)
         {
@@ -40,9 +38,9 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve DepartmentID");
             }
             return DepartmentID;
         }
@@ -74,17 +72,17 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve DepartmentName");
             }
             return DepartmentName;
         }
 
-        public List<string> GetAllDepartmentNames()
+        public void GetAllDepartments(int iNumber)
         {
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT Department_Name FROM departments";
+            string query = "SELECT * FROM departments LIMIT " + iNumber + ",1";
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
             MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -96,10 +94,10 @@ namespace ToDoList.Model
                 reader = commandDatabase.ExecuteReader();
                 if (reader.HasRows)
                 {
-                    AllDepartmentNames = new List<string>();
                     while (reader.Read())
                     {
-                        AllDepartmentNames.Add(reader.GetString(0));
+                        DepartmentID = reader.GetString(0);
+                        DepartmentName = reader.GetString(1);
                     }
                 }
                 else
@@ -109,11 +107,10 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve Departments");
             }
-            return AllDepartmentNames;
         }
     }
 }

@@ -10,12 +10,15 @@ namespace ToDoList.Model
     {
         public string SiteID { get; set; }
         public string SiteName { get; set; }
-        public string CustomerID { get; set; }
-        public string CustomerName { get; set; }
-        public string ContractManagerID { get; set; }
-        public string ContractManagerName { get; set; }
-        public string DepartmentID { get; set; }
-        public string DepartmentName { get; set; }
+        public Customer Customer { get; set; }
+        public ContractManager ContractManager { get; set; }
+        public Department Department { get; set; }
+        public string cusID;
+        public string conID;
+        public string depID;
+        public string cusName;
+        public string conName;
+        public string depName;
 
         public void GetAllSiteDataWithiNumber(int iNumber)
         {
@@ -36,9 +39,9 @@ namespace ToDoList.Model
                     {
                         SiteID = reader.GetString(0);
                         SiteName = reader.GetString(4);
-                        CustomerID = reader.GetString(1);
-                        ContractManagerID = reader.GetString(3);
-                        DepartmentID = reader.GetString(2);
+                        cusID = reader.GetString(1);
+                        conID = reader.GetString(3);
+                        depID = reader.GetString(2);
                     }
                 }
                 else
@@ -48,16 +51,19 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve Sites");
             }
-            Department Dep = new Department();
-            DepartmentName = Dep.GetDepartmentName(DepartmentID);
-            Customer Cus = new Customer();
-            CustomerName = Cus.GetCustomerName(CustomerID);
-            ContractManager Con = new ContractManager();
-            ContractManagerName = Con.GetContractManagerName(ContractManagerID);
+            Department = new Department();
+            Department.DepartmentID = depID;
+            Department.GetDepartmentName(depID);
+            ContractManager = new ContractManager();
+            ContractManager.ContractManagerID = conID;
+            ContractManager.GetContractManagerName(conID);
+            Customer = new Customer();
+            Customer.CustomerID = cusID;
+            Customer.GetCustomerName(cusID);
         }
 
         public void GetSiteID(string SiteName)
@@ -87,9 +93,9 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve SiteID");
             }
         }
 
@@ -120,26 +126,20 @@ namespace ToDoList.Model
                 }
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve a word from db, fallback word is selected.");
+                Console.WriteLine("Failed to retrieve SiteName");
             }
         }
 
         public string CreateNewSite()
         {
-            Department Dep = new Department();
-            DepartmentID = Dep.GetDepartmentId(DepartmentName);
-            int DepartmentId = Int32.Parse(DepartmentID);
-            Customer Cus = new Customer();
-            CustomerID = Cus.GetCustomerId(CustomerName);
-            int CustomerId = Int32.Parse(CustomerID);
-            ContractManager Con = new ContractManager();
-            ContractManagerID = Con.GetContractManagerId(ContractManagerName);
-            int ContractManagerId = Int32.Parse(ContractManagerID);
+            depID = Department.GetDepartmentId(Department.DepartmentName);
+            conID = ContractManager.GetContractManagerId(ContractManager.ContractManagerName);
+            cusID = Customer.GetCustomerId(Customer.CustomerName);
 
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "INSERT INTO sites(Customer_Id,Department_Id,ContractManager_Id,Site_Name) values('" + CustomerId + "','" + DepartmentId + "','" + ContractManagerId + "','" + SiteName + "')";
+            string query = "INSERT INTO sites(Customer_Id,Department_Id,ContractManager_Id,Site_Name) values('" + cusID + "','" + depID + "','" + conID + "','" + SiteName + "')";
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
             MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -151,9 +151,9 @@ namespace ToDoList.Model
                 reader = commandDatabase.ExecuteReader();
                 databaseConnection.Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Failed to create a new entry");
+                Console.WriteLine("Failed to create a new site");
             }
             GetSiteID(SiteName);
             return SiteID;
