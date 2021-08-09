@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ToDoList.Model
 {
@@ -10,20 +12,32 @@ namespace ToDoList.Model
     {
         public string SiteID { get; set; }
         public string SiteName { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public DateTime SiteActiveSince { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public DateTime SiteContractStart { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public DateTime SiteContractEnd { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string SiteContactName { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string SiteContactEmail { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string SiteAddressCountry { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string SiteAddressCity { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string SiteAddressPostal { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string SiteAddressStreet { get; set; }
         public Customer Customer { get; set; }
         public ContractManager ContractManager { get; set; }
-        public Department Department { get; set; }
-        public string cusID;
-        public string conID;
-        public string depID;
-        public string cusName;
-        public string conName;
-        public string depName;
+
 
         public void GetAllSiteDataWithiNumber(int iNumber)
         {
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM sites LIMIT "+ iNumber + ",1";
+            string query = "SELECT * FROM sites LIMIT " + iNumber + ",1";
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
             MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -38,10 +52,14 @@ namespace ToDoList.Model
                     while (reader.Read())
                     {
                         SiteID = reader.GetString(0);
-                        SiteName = reader.GetString(4);
-                        cusID = reader.GetString(1);
-                        conID = reader.GetString(3);
-                        depID = reader.GetString(2);
+                        SiteName = reader.GetString(1);
+                        Customer = new Customer();
+                        Customer.CustomerID = reader.GetString(11);
+                        Customer.GetCustomerName(Customer.CustomerID);
+                        ContractManager = new ContractManager();
+                        ContractManager.ContractManagerID = reader.GetString(12);
+                        ContractManager.GetContractManagerName(ContractManager.ContractManagerID);
+                        ContractManager.GetDepartmentData();
                     }
                 }
                 else
@@ -55,15 +73,6 @@ namespace ToDoList.Model
             {
                 Console.WriteLine("Failed to retrieve Sites");
             }
-            Department = new Department();
-            Department.DepartmentID = depID;
-            Department.GetDepartmentName(depID);
-            ContractManager = new ContractManager();
-            ContractManager.ContractManagerID = conID;
-            ContractManager.GetContractManagerName(conID);
-            Customer = new Customer();
-            Customer.CustomerID = cusID;
-            Customer.GetCustomerName(cusID);
         }
 
         public void GetSiteID(string SiteName)
@@ -116,7 +125,7 @@ namespace ToDoList.Model
                 {
                     while (reader.Read())
                     {
-                        SiteName = reader.GetString(4);
+                        SiteName = reader.GetString(1);
                     }
                 }
                 else
@@ -134,12 +143,8 @@ namespace ToDoList.Model
 
         public string CreateNewSite()
         {
-            depID = Department.GetDepartmentId(Department.DepartmentName);
-            conID = ContractManager.GetContractManagerId(ContractManager.ContractManagerName);
-            cusID = Customer.GetCustomerId(Customer.CustomerName);
-
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "INSERT INTO sites(Customer_Id,Department_Id,ContractManager_Id,Site_Name) values('" + cusID + "','" + depID + "','" + conID + "','" + SiteName + "')";
+            string query = "INSERT INTO sites(Customer_Id,Department_Id,ContractManager_Id,Site_Name) values('" + Customer.GetCustomerId(Customer.CustomerName) + "','" + ContractManager.Department.DepartmentID + "','" + ContractManager.GetContractManagerId(ContractManager.ContractManagerName) + "','" + SiteName + "')";
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
             MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -157,6 +162,204 @@ namespace ToDoList.Model
             }
             GetSiteID(SiteName);
             return SiteID;
+        }
+
+        public void UpdateSiteValues(int SiteId)
+        {
+            string query = "UPDATE sites SET ";
+            Boolean PreviousInput = false;
+            if (SiteName != null) {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Name = '" + SiteName + "'";
+                }
+                else
+                {
+                    query = query + " Site_Name = '" + SiteName + "'";
+                    PreviousInput = true;
+                }
+            }
+            if (SiteContractStart != DateTime.MinValue)
+            {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Contract_Start = '" + SiteContractStart.ToShortDateString() + "'";
+                }
+                else
+                {
+                    query = query + " Site_Contract_Start = '" + SiteContractStart.ToShortDateString() + "'";
+                    PreviousInput = true;
+                }
+            }
+            if (SiteContractEnd != DateTime.MinValue)
+            {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Contract_End = '" + SiteContractEnd.ToShortDateString() + "'";
+                }
+                else
+                {
+                    query = query + " Site_Contract_End = '" + SiteContractEnd.ToShortDateString() + "'";
+                    PreviousInput = true;
+                }
+            }
+            if (SiteContactName != null)
+            {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Contact_Name = '" + SiteContactName + "'";
+                }
+                else
+                {
+                    query = query + " Site_Contact_Name = '" + SiteContactName + "'";
+                    PreviousInput = true;
+                }
+            }
+            if (SiteContactEmail != null)
+            {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Contact_Email = '" + SiteContactEmail + "'";
+                }
+                else
+                {
+                    query = query + " Site_Contact_Email = '" + SiteContactEmail + "'";
+                    PreviousInput = true;
+                }
+            }
+            if (SiteAddressCountry != null)
+            {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Address_Country = '" + SiteAddressCountry + "'";
+                }
+                else
+                {
+                    query = query + " Site_Address_Country = '" + SiteAddressCountry + "'";
+                    PreviousInput = true;
+                }
+            }
+            if (SiteAddressCity != null)
+            {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Address_City = '" + SiteAddressCity + "'";
+                }
+                else
+                {
+                    query = query + " Site_Address_City = '" + SiteAddressCity + "'";
+                    PreviousInput = true;
+                }
+            }
+            if (SiteAddressPostal != null)
+            {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Address_Postal = '" + SiteAddressPostal + "'";
+                }
+                else
+                {
+                    query = query + " Site_Address_Postal = '" + SiteAddressPostal + "'";
+                    PreviousInput = true;
+                }
+            }
+            if (SiteAddressStreet != null)
+            {
+                if (PreviousInput)
+                {
+                    query = query + ", Site_Address_Street = '" + SiteAddressStreet + "'";
+                }
+                else
+                {
+                    query = query + " Site_Address_Street = '" + SiteAddressStreet + "'";
+                    PreviousInput = true;
+                }
+            }
+            if(ContractManager != null){
+                if (ContractManager.ContractManagerName != null)
+                {
+                    ContractManager.GetContractManagerId(ContractManager.ContractManagerName);
+                    if (PreviousInput)
+                    {
+                        query = query + ", ContractManager_Id = '" + ContractManager.ContractManagerID + "'";
+                    }
+                    else
+                    {
+                        query = query + " ContractManager_Id = '" + ContractManager.ContractManagerID + "'";
+                        PreviousInput = true;
+                    }
+                }
+            }
+
+            if (PreviousInput)
+            {
+                string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
+                query = query + " WHERE Site_Id = '" + SiteId + "';";
+                MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+                MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
+                commandDatabase.CommandTimeout = 60;
+                MySqlDataReader reader;
+
+                try
+                {
+                    databaseConnection.Open();
+                    reader = commandDatabase.ExecuteReader();
+                    databaseConnection.Close();
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Failed to update site data");
+                }
+            }
+        }
+        public void GetSiteDetails(int SiteId)
+        {
+            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
+            string query = "SELECT * FROM sites WHERE Site_Id = '" + SiteId + "';";
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
+            commandDatabase.CommandTimeout = 60;
+            MySqlDataReader reader;
+
+            try
+            {
+                databaseConnection.Open();
+                reader = commandDatabase.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        SiteID = reader.GetString(0);
+                        SiteName = reader.GetString(1);
+                        Customer = new Customer();
+                        Customer.CustomerID = reader.GetString(11);
+                        Customer.GetCustomerDetailsFromID(Customer.CustomerID);
+                        ContractManager = new ContractManager();
+                        ContractManager.ContractManagerID = reader.GetString(12);
+                        ContractManager.GetContractManagerName(ContractManager.ContractManagerID);
+                        ContractManager.GetDepartmentData();
+                        SiteActiveSince = Convert.ToDateTime(reader.GetString(2));
+                        SiteContractStart = Convert.ToDateTime(reader.GetString(3));
+                        SiteContractEnd = Convert.ToDateTime(reader.GetString(4));
+                        SiteContactName = reader.GetString(5);
+                        SiteContactEmail = reader.GetString(6);
+                        SiteAddressCountry = reader.GetString(7);
+                        SiteAddressCity = reader.GetString(8);
+                        SiteAddressPostal = reader.GetString(9);
+                        SiteAddressStreet = reader.GetString(10);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No rows found");
+
+                }
+                databaseConnection.Close();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to retrieve SiteID");
+            }
         }
     }
 }

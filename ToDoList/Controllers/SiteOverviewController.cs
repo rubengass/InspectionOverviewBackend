@@ -13,6 +13,7 @@ namespace ToDoList.Controllers
     [ApiController]
     public class SiteOverviewController : ControllerBase
     {
+        // GET all sites
         [HttpGet]
         public IEnumerable<SiteOverview> Get()
         {
@@ -21,7 +22,7 @@ namespace ToDoList.Controllers
             return new SiteOverview[] { Overview };
         }
 
-        // GET api/<SiteController>/5
+        // GET specified number and scope of sites
         [HttpGet("{NumberOfRowsMin:int},{NumberOfRowsMax:int}")]
         public IEnumerable<SiteOverview> Get(int NumberOfRowsMin, int NumberOfRowsMax)
         {
@@ -30,22 +31,31 @@ namespace ToDoList.Controllers
             return new SiteOverview[] { Overview };
         }
 
+        // GET sites based on search result
+        [HttpGet("{Filters:int}")] //,{CustomerNameSearch:string},{ContractManagerNameSearch:string},{DepartmentNameSearch:string}
+        public IEnumerable<SiteOverview> Get(int Filters, string SiteIDSearch, string SiteNameSearch, string CustomerNameSearch, string ContractManagerNameSearch, string DepartmentNameSearch) 
+        {
+            SiteOverview Overview = new SiteOverview();
+            Overview.FetchSearchResults(SiteIDSearch, SiteNameSearch, CustomerNameSearch, ContractManagerNameSearch, DepartmentNameSearch, Filters); 
+            return new SiteOverview[] { Overview };
+        }
+
         // POST api/<SiteController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
+        //[HttpPost]
+        //public void Post([FromBody] string value)
+        //{
+        //}
 
-        // PUT api/<SiteController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        //// PUT api/<SiteController>/5
+        //[HttpPut("{id}")]
+        //public void Put(int id, [FromBody] string value)
+        //{
+        //}
 
-        // DELETE api/<SiteController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        //// DELETE api/<SiteController>/5
+        //[HttpDelete("{id}")]
+        //public void Delete(int id)
+        //{
+        //}
     }
 }

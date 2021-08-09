@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using MySql.Data.MySqlClient;
 
@@ -10,6 +11,8 @@ namespace ToDoList.Model
     {
         public string DepartmentID { get; set; }
         public string DepartmentName { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<ContractManager> ContractManagers { get; set; }
 
         public string GetDepartmentId(string DepartmentName)
         {
@@ -98,6 +101,14 @@ namespace ToDoList.Model
                     {
                         DepartmentID = reader.GetString(0);
                         DepartmentName = reader.GetString(1);
+                        ContractManagers = new List<ContractManager>();
+                        int NumberOfRecords = GetNumberOfContractManagersForDepartment(DepartmentID);
+                        for (int i = 0; i < NumberOfRecords; i++)
+                        {
+                            ContractManager Object = new ContractManager();
+                            Object.GetContractManagerDataFromDepartmentID(DepartmentID,i);
+                            ContractManagers.Add(Object);
+                        }
                     }
                 }
                 else
@@ -109,8 +120,39 @@ namespace ToDoList.Model
             }
             catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve Departments");
+                Console.WriteLine("Failed to retrieve Contract Manager Info");
             }
+        }
+
+        public int GetNumberOfContractManagersForDepartment(string DepartmentID)
+        {
+            int NumberOfRecords = 0;
+            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
+            string query = "SELECT COUNT(*) FROM contractmanagers WHERE Department_Id = '"+DepartmentID+"';";
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
+            commandDatabase.CommandTimeout = 60;
+            MySqlDataReader reader;
+
+            try
+            {
+                databaseConnection.Open();
+                reader = commandDatabase.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        string Count = reader.GetString(0);
+                        NumberOfRecords = Int32.Parse(Count);
+                    }
+                }
+                databaseConnection.Close();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to get the number of filtered sites.");
+            }
+            return NumberOfRecords;
         }
     }
 }

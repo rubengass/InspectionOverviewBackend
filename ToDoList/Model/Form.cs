@@ -6,7 +6,7 @@ using MySql.Data.MySqlClient;
 
 namespace ToDoList.Model
 {
-    public class FormNewSite
+    public class Form
     {
         private int NumberOfRecords;
         public List<Department> Departments { get; set; }
@@ -85,18 +85,14 @@ namespace ToDoList.Model
             }
         }
 
-        public void GetContractManagerNames(string departmentName)
+        public void GetContractManagerNames()
         {
-            Department Dep = new Department();
-            string DepID = Dep.GetDepartmentId(departmentName);
-            int DepartmentID = Int32.Parse(DepID);
-
-            NumberOfRecords = GetNumberOfFilteredRecords("contractmanagers","Department_Id",DepID);
+            NumberOfRecords = GetNumberOfRecords("contractmanagers");
             ContractManagers = new List<ContractManager>();
             for (int i = 0; i < NumberOfRecords; i++)
             {
                 ContractManager Object = new ContractManager();
-                Object.GetContractManagers(i,DepartmentID);
+                Object.GetContractManagers(i);
                 ContractManagers.Add(Object);
             }
         }
