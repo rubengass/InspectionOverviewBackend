@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using ToDoList.Model;
 
@@ -24,11 +26,25 @@ namespace ToDoList.Controllers
 
         // GET specified number and scope of sites
         [HttpGet("{NumberOfRowsMin:int},{NumberOfRowsMax:int}")]
-        public IEnumerable<SiteOverview> Get(int NumberOfRowsMin, int NumberOfRowsMax)
+        public IEnumerable<SiteOverview> Get(int NumberOfRowsMin, int NumberOfRowsMax, string AuthKey)
         {
-            SiteOverview Overview = new SiteOverview();
-            Overview.FetchPaginatedSites(NumberOfRowsMin,NumberOfRowsMax);
-            return new SiteOverview[] { Overview };
+            string AuthKey2 = null;
+            HttpRequestMessage re = new HttpRequestMessage();
+            var headers = re.Headers;
+            if (headers.Contains("Authorization"))
+            {
+                AuthKey2 = headers.GetValues("Authorization").First();
+            }
+            Authentication Auth = new Authentication();
+            if (Auth.AuthenticateUser(AuthKey2))
+            {
+                SiteOverview Overview = new SiteOverview();
+                Overview.FetchPaginatedSites(NumberOfRowsMin, NumberOfRowsMax);
+                return new SiteOverview[] { Overview };
+            } else
+            {
+                return null;
+            }
         }
 
         // GET sites based on search result
