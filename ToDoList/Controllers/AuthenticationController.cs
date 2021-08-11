@@ -9,22 +9,30 @@ using ToDoList.Model;
 
 namespace ToDoList.Controllers
 {
-    //[Route("api/login")]
-    //[ApiController]
-    //public class AuthenticationController : ControllerBase
-    //{
-    //    // POST Login with new login details
-    //    [HttpPost]
-    //    public void Post([FromBody] Authentication Auth)
-    //    {
-    //        Auth.Login();
-    //    }
+    [Route("api/login")]
+    [ApiController]
+    public class AuthenticationController : ControllerBase
+    {
+        // GET specified number and scope of sites
+        [HttpGet("{AuthenticationKey}")]
+        public Boolean Get(string AuthenticationKey)
+        {
+            Authentication Auth = new Authentication();
+            return Auth.AuthenticateUser(AuthenticationKey);
+        }
 
-    //    // DELETE api/<AuthenticationController>/5
-    //    [HttpDelete("{AuthenticationKey}")]
-    //    public void Delete(string AuthenticationKey)
-    //    {
+        // POST Login with new login details
+        [HttpPost]
+        public string Post([FromBody] Authentication Auth)
+        {
+            return Auth.Login();
+        }
 
-    //    }
-    //}
+        // DELETE api/<AuthenticationController>/5
+        [HttpDelete("{AuthenticationKey}")]
+        public void Delete(string AuthenticationKey)
+        {
+
+        }
+    }
 }

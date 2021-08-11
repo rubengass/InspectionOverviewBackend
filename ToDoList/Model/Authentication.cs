@@ -10,23 +10,26 @@ namespace ToDoList.Model
 {
     public class Authentication
     {
-        public string Username;
-        public string Password;
+        private string _Username;
+        private string _Password;
         private string AuthenticationKey;
+        private int UserId;
 
-        //public string Username {
-        //    get => _Username;
-        //    set { _Username = value; } }
-        //public string Password
-        //{
-        //    get => _Password;
-        //    set { _Password = value; }
-        //}
+        public string Username
+        {
+            get => _Username;
+            set { _Username = value; }
+        }
+        public string Password
+        {
+            get => _Password;
+            set { _Password = value; }
+        }
 
         private bool PerformLogin()
         {
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT COUNT(*) FROM login WHERE Username = '" + Username + "' AND Password = '"+Password+"';";
+            string query = "SELECT * FROM login WHERE Username = '" + _Username + "' AND Password = '"+_Password+"';";
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
             MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -40,9 +43,9 @@ namespace ToDoList.Model
                 {
                     while (reader.Read())
                     {
-                        string Count = reader.GetString(0);
-                        int NumberOfResults = Int32.Parse(Count);
-                        if (NumberOfResults == 1)
+                        string UID = reader.GetString(0);
+                        UserId = Int32.Parse(UID);
+                        if(UserId >0)
                         {
                             databaseConnection.Close();
                             return true;
@@ -63,7 +66,7 @@ namespace ToDoList.Model
             }
             catch (Exception)
             {
-                Console.WriteLine("Failed to retrieve ContractManagers");
+                Console.WriteLine("Failed verify login details");
                 return false;
             }
         }
@@ -72,10 +75,59 @@ namespace ToDoList.Model
         {
             if (PerformLogin())
             {
+                if (AuthenticationKeyExistsForUser())
+                {
+                    RemoveDuplicateKeys();
+                }
                 GenerateAuthenticationKey();
                 SaveAuthenticationKey();
             }
             return AuthenticationKey;
+        }
+
+        private bool AuthenticationKeyExistsForUser()
+        {
+            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
+            string query = "SELECT COUNT(*) FROM tempkeys WHERE UserId = '" + UserId + "';";
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
+            commandDatabase.CommandTimeout = 60;
+            MySqlDataReader reader;
+
+            try
+            {
+                databaseConnection.Open();
+                reader = commandDatabase.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        string Count = reader.GetString(0);
+                        int UserExists = Int32.Parse(Count);
+                        if (UserExists >0)
+                        {
+                            databaseConnection.Close();
+                            return true;
+                        }
+                        databaseConnection.Close();
+                        return false;
+
+                    }
+                    databaseConnection.Close();
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("No rows found");
+                    databaseConnection.Close();
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to check for duplicate user keys");
+                return false;
+            }
         }
 
         private void GenerateAuthenticationKey()
@@ -101,7 +153,7 @@ namespace ToDoList.Model
         private void SaveAuthenticationKey()
         {
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "INSERT INTO tempkeys(AuthenticationKey, Expiry) values('" + AuthenticationKey + "','" + DateTime.UtcNow.AddMinutes(30) + "');";
+            string query = "INSERT INTO tempkeys(AuthenticationKey, Expiry, UserId) values('" + AuthenticationKey + "','" + DateTime.UtcNow.AddMinutes(30).ToString("yyyy-MM-ddTHH:mm:ssZ") + "','" + UserId+"');";
             MySqlConnection databaseConnection = new MySqlConnection(connectionString);
             MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -121,12 +173,95 @@ namespace ToDoList.Model
 
         private void RemoveExpiredKeys()
         {
+            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
+            string query = "DELETE FROM tempkeys WHERE Expiry < '" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "';";
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
+            commandDatabase.CommandTimeout = 60;
+            MySqlDataReader reader;
 
+            try
+            {
+                databaseConnection.Open();
+                reader = commandDatabase.ExecuteReader();
+                databaseConnection.Close();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed delete expired keys");
+            }
         }
 
-        public void AuthenticateKey()
+        private void RemoveDuplicateKeys()
+        {
+            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
+            string query = "DELETE FROM tempkeys WHERE UserId = " + UserId + ";";
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
+            commandDatabase.CommandTimeout = 60;
+            MySqlDataReader reader;
+
+            try
+            {
+                databaseConnection.Open();
+                reader = commandDatabase.ExecuteReader();
+                databaseConnection.Close();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed delete duplicate keys");
+            }
+        }
+
+        public Boolean AuthenticateUser(string AuthKey)
         {
             RemoveExpiredKeys();
+            return AuthenticationKeyIsValid(AuthKey);
+        }
+
+        private bool AuthenticationKeyIsValid(string AuthKey)
+        {
+            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
+            string query = "SELECT COUNT(*) FROM tempkeys WHERE AuthenticationKey = '" + AuthKey + "';";
+            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
+            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
+            commandDatabase.CommandTimeout = 60;
+            MySqlDataReader reader;
+
+            try
+            {
+                databaseConnection.Open();
+                reader = commandDatabase.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        string Count = reader.GetString(0);
+                        int UserExists = Int32.Parse(Count);
+                        if (UserExists > 0)
+                        {
+                            databaseConnection.Close();
+                            return true;
+                        }
+                        databaseConnection.Close();
+                        return false;
+
+                    }
+                    databaseConnection.Close();
+                    return false;
+                }
+                else
+                {
+                    Console.WriteLine("No rows found");
+                    databaseConnection.Close();
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Failed to check for duplicate user keys");
+                return false;
+            }
         }
 
         public void DeleteAuthenticationKey()
