@@ -30,7 +30,9 @@ namespace ToDoList.Model
         public string SiteAddressPostal { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string SiteAddressStreet { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Customer Customer { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ContractManager ContractManager { get; set; }
 
 
