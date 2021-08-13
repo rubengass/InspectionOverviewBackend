@@ -209,6 +209,7 @@ namespace ToDoList.Model
                     int CountOfReads = 0;
                     while (reader.Read())
                     {
+                        //CountOfReads == 0 ? GoToSomething() : GoToSomethingElse();
                         if(CountOfReads == 0)
                         {
                             ReturnString = " Customer_Id = " + reader.GetString(0);

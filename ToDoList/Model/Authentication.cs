@@ -13,7 +13,7 @@ namespace ToDoList.Model
         private string _Username;
         private string _Password;
         private string AuthenticationKey;
-        private int UserId;
+        private int _UserId;
 
         public string Username
         {
@@ -26,49 +26,18 @@ namespace ToDoList.Model
             set { _Password = value; }
         }
 
-        private bool PerformLogin()
+        private Boolean PerformLogin()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM login WHERE Username = '" + _Username + "' AND Password = '"+_Password+"';";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        string UID = reader.GetString(0);
-                        UserId = Int32.Parse(UID);
-                        if(UserId >0)
-                        {
-                            databaseConnection.Close();
-                            return true;
-                        }
-                        databaseConnection.Close();
-                        return false;
-
-                    }
-                    databaseConnection.Close();
-                    return false;
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-                    databaseConnection.Close();
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed verify login details");
-                return false;
-            }
+            string Query = "SELECT * FROM login WHERE Username = '" + _Username + "' AND Password = '"+_Password+"';";
+            SelectReference reference = new SelectReference();
+            reference.LoginReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            _UserId = Convert.ToInt32(response.Data.Value[0]);
+            _Username = response.Data.Value[1];
+            _Password = response.Data.Value[2];
+            return response.Success;
         }
 
         public string Login()
@@ -85,47 +54,18 @@ namespace ToDoList.Model
             return AuthenticationKey;
         }
 
-        private bool AuthenticationKeyExistsForUser()
+        private Boolean AuthenticationKeyExistsForUser()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT COUNT(*) FROM tempkeys WHERE UserId = '" + UserId + "';";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT COUNT(*) FROM tempkeys WHERE UserId = '" + _UserId + "';";
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            response = DBM.execute(new DatabaseCommandCount(), Query);
+            if (response.Data == "1")
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        string Count = reader.GetString(0);
-                        int UserExists = Int32.Parse(Count);
-                        if (UserExists >0)
-                        {
-                            databaseConnection.Close();
-                            return true;
-                        }
-                        databaseConnection.Close();
-                        return false;
-
-                    }
-                    databaseConnection.Close();
-                    return false;
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-                    databaseConnection.Close();
-                    return false;
-                }
+                return true;
             }
-            catch (Exception)
+            else
             {
-                Console.WriteLine("Failed to check for duplicate user keys");
                 return false;
             }
         }
@@ -150,66 +90,51 @@ namespace ToDoList.Model
             AuthenticationKey = result.ToString();
         }
 
-        private void SaveAuthenticationKey()
+        private Boolean SaveAuthenticationKey()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "INSERT INTO tempkeys(AuthenticationKey, Expiry, UserId) values('" + AuthenticationKey + "','" + DateTime.UtcNow.AddMinutes(30).ToString("yyyy-MM-ddTHH:mm:ssZ") + "','" + UserId+"');";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "INSERT INTO tempkeys(AuthenticationKey, Expiry, UserId) values('" + AuthenticationKey + "','" + DateTime.UtcNow.AddMinutes(30).ToString("yyyy-MM-ddTHH:mm:ssZ") + "','" + _UserId+"');";
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            response = DBM.execute(new DatabaseCommandInsert(), Query);
+            if (response.Data == "1")
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                databaseConnection.Close();
+                return true;
             }
-            catch (Exception)
+            else
             {
-                Console.WriteLine("Failed save the generated authentication key");
+                return false;
             }
         }
 
-        private void RemoveExpiredKeys()
+        private Boolean RemoveExpiredKeys()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "DELETE FROM tempkeys WHERE Expiry < '" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "';";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "DELETE FROM tempkeys WHERE Expiry < '" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "';";
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            response = DBM.execute(new DatabaseCommandDelete(), Query);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                databaseConnection.Close();
+                return true;
             }
-            catch (Exception)
+            else
             {
-                Console.WriteLine("Failed delete expired keys");
+                return false;
             }
         }
 
-        private void RemoveDuplicateKeys()
+        private Boolean RemoveDuplicateKeys()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "DELETE FROM tempkeys WHERE UserId = " + UserId + ";";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "DELETE FROM tempkeys WHERE UserId = " + _UserId + ";";
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            response = DBM.execute(new DatabaseCommandDelete(), Query);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                databaseConnection.Close();
+                return true;
             }
-            catch (Exception)
+            else
             {
-                Console.WriteLine("Failed delete duplicate keys");
+                return false;
             }
         }
 
@@ -221,52 +146,34 @@ namespace ToDoList.Model
 
         private bool AuthenticationKeyIsValid(string AuthKey)
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT COUNT(*) FROM tempkeys WHERE AuthenticationKey = '" + AuthKey + "';";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT COUNT(*) FROM tempkeys WHERE AuthenticationKey = '" + AuthKey + "';";
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            response = DBM.execute(new DatabaseCommandCount(), Query);
+            if(response.Data == "1")
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        string Count = reader.GetString(0);
-                        int UserExists = Int32.Parse(Count);
-                        if (UserExists > 0)
-                        {
-                            databaseConnection.Close();
-                            return true;
-                        }
-                        databaseConnection.Close();
-                        return false;
-
-                    }
-                    databaseConnection.Close();
-                    return false;
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-                    databaseConnection.Close();
-                    return false;
-                }
-            }
-            catch (Exception)
+                return true;
+            } else
             {
-                Console.WriteLine("Failed to check for duplicate user keys");
                 return false;
             }
         }
 
-        public void DeleteAuthenticationKey()
+        public bool DeleteAuthenticationKey(string AuthKey)
         {
             RemoveExpiredKeys();
+            string Query = "DELETE FROM tempkeys WHERE AuthenticationKey = '" + AuthKey + "';";
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            response = DBM.execute(new DatabaseCommandDelete(), Query);
+            if (response.Success)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
