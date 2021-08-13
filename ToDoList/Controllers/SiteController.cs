@@ -13,13 +13,29 @@ namespace ToDoList.Controllers
     [ApiController]
     public class SiteController : ControllerBase
     {
+        //[HttpGet]
+        //public Site Get(string SiteID)
+        //{
+        //    Site site = new Site();
+        //    site.TEMPGetCompleteSiteData(SiteID);
+        //    return site;
+        //}
+
         // GET individual site
         [HttpGet("{SiteID}")]
-        public Site Get(int SiteID)
+        public Response<Site> Get(int SiteID)
         {
             Site site = new Site();
-            site.GetSiteDetails(SiteID);
-            return site;
+            Response<Site> response = new Response<Site>();
+            if (site.GetSiteDetails(SiteID))
+            {
+                response.Success = true;
+                response.Data = site;
+            } else
+            {
+                response.FailedToContactServer();
+            }
+            return response;
         }
 
         // POST create new site
@@ -32,9 +48,13 @@ namespace ToDoList.Controllers
 
         // PUT update existing site
         [HttpPut("{SiteId}")]
-        public void Put(int SiteId, [FromBody] Site site)
+        public Response<string> Put(int SiteId, [FromBody] Site site)
         {
-            site.UpdateSiteValues(SiteId);
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            string Query = site.GenerateUpdateQuery(SiteId);
+            response = DBM.execute(new DatabaseCommandUpdate(),Query);
+            return response;
         }
 
         // DELETE delete site

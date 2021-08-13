@@ -77,6 +77,38 @@ namespace ToDoList.Model
             }
         }
 
+        public Boolean GetSiteDetails(int SiteId)
+        {
+            string Query = "SELECT * FROM sites WHERE Site_Id = '" + SiteId + "';";
+            SelectReference reference = new SelectReference();
+            reference.SiteReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
+            {
+                SiteID = response.Data.Value[0];
+                SiteName = response.Data.Value[1];
+                SiteActiveSince = Convert.ToDateTime(response.Data.Value[2]);
+                SiteContractStart = Convert.ToDateTime(response.Data.Value[3]);
+                SiteContractEnd = Convert.ToDateTime(response.Data.Value[4]);
+                SiteContactName = response.Data.Value[5];
+                SiteContactEmail = response.Data.Value[6];
+                SiteAddressCountry = response.Data.Value[7];
+                SiteAddressCity = response.Data.Value[8];
+                SiteAddressPostal = response.Data.Value[9];
+                SiteAddressStreet = response.Data.Value[10];
+                Customer = new Customer();
+                Customer.CustomerID = response.Data.Value[11];
+                Customer.GetCustomerName(Customer.CustomerID);
+                ContractManager = new ContractManager();
+                ContractManager.ContractManagerID = response.Data.Value[12];
+                ContractManager.GetContractManagerName(ContractManager.ContractManagerID);
+                ContractManager.GetDepartmentData();
+            }
+            return response.Success;
+        }
+
         public void GetSiteID(string SiteName)
         {
             string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
@@ -166,7 +198,7 @@ namespace ToDoList.Model
             return SiteID;
         }
 
-        public void UpdateSiteValues(int SiteId)
+        public string GenerateUpdateQuery(int SiteId)
         {
             string query = "UPDATE sites SET ";
             Boolean PreviousInput = false;
@@ -292,76 +324,8 @@ namespace ToDoList.Model
                     }
                 }
             }
-
-            if (PreviousInput)
-            {
-                string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-                query = query + " WHERE Site_Id = '" + SiteId + "';";
-                MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-                MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-                commandDatabase.CommandTimeout = 60;
-                MySqlDataReader reader;
-
-                try
-                {
-                    databaseConnection.Open();
-                    reader = commandDatabase.ExecuteReader();
-                    databaseConnection.Close();
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Failed to update site data");
-                }
-            }
-        }
-        public void GetSiteDetails(int SiteId)
-        {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM sites WHERE Site_Id = '" + SiteId + "';";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        SiteID = reader.GetString(0);
-                        SiteName = reader.GetString(1);
-                        Customer = new Customer();
-                        Customer.CustomerID = reader.GetString(11);
-                        Customer.GetCustomerDetailsFromID(Customer.CustomerID);
-                        ContractManager = new ContractManager();
-                        ContractManager.ContractManagerID = reader.GetString(12);
-                        ContractManager.GetContractManagerName(ContractManager.ContractManagerID);
-                        ContractManager.GetDepartmentData();
-                        SiteActiveSince = Convert.ToDateTime(reader.GetString(2));
-                        SiteContractStart = Convert.ToDateTime(reader.GetString(3));
-                        SiteContractEnd = Convert.ToDateTime(reader.GetString(4));
-                        SiteContactName = reader.GetString(5);
-                        SiteContactEmail = reader.GetString(6);
-                        SiteAddressCountry = reader.GetString(7);
-                        SiteAddressCity = reader.GetString(8);
-                        SiteAddressPostal = reader.GetString(9);
-                        SiteAddressStreet = reader.GetString(10);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve SiteID");
-            }
+            query = query + " WHERE Site_Id = '" + SiteId + "';";
+            return query;
         }
     }
 }

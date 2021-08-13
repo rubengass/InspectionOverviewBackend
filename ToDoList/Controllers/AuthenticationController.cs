@@ -13,7 +13,7 @@ namespace ToDoList.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        // GET specified number and scope of sites
+        // GET DEBUG
         [HttpGet("{AuthenticationKey}")]
         public Boolean Get(string AuthenticationKey)
         {
@@ -23,16 +23,41 @@ namespace ToDoList.Controllers
 
         // POST Login with new login details
         [HttpPost]
-        public string Post([FromBody] Authentication Auth)
+        public Response<string> Post([FromBody] Authentication Auth)
         {
-            return Auth.Login();
+            string AuthKey = Auth.Login();
+            if (AuthKey != null)
+            {
+                Response<string> response = new Response<string>();
+                response.Success = true;
+                response.Data = AuthKey;
+                return response;
+            }
+            else
+            {
+                Response<string> response = new Response<string>();
+                response.FailedToAuthenticate();
+                return response;
+            }
         }
 
-        // DELETE api/<AuthenticationController>/5
+        // DELETE existing AuthenticationKey
         [HttpDelete("{AuthenticationKey}")]
-        public void Delete(string AuthenticationKey)
+        public Response<string> Delete(string AuthenticationKey)
         {
-
+            Authentication Auth = new Authentication();
+            if (Auth.DeleteAuthenticationKey(AuthenticationKey))
+            {
+                Response<string> response = new Response<string>();
+                response.GenericSuccessCode();
+                return response;
+            }
+            else
+            {
+                Response<string> response = new Response<string>();
+                response.FailedToContactServer();
+                return response;
+            }
         }
     }
 }

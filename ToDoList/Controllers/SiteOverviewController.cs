@@ -17,43 +17,67 @@ namespace ToDoList.Controllers
     {
         // GET all sites
         [HttpGet]
-        public IEnumerable<SiteOverview> Get()
+        public Response<SiteOverview> Get()
         {
-            SiteOverview Overview = new SiteOverview();
-            Overview.FetchAllSites();
-            return new SiteOverview[] { Overview };
+            Authentication Auth = new Authentication();
+            if (Auth.AuthenticateUser(Request.Headers["Authorization"]))
+            {
+                SiteOverview Overview = new SiteOverview();
+                Overview.FetchAllSites();
+                Response<SiteOverview> response = new Response<SiteOverview>();
+                response.Success = true;
+                response.Data = Overview;
+                return response;
+            } else
+            {
+                Response<SiteOverview> response = new Response<SiteOverview>();
+                response.FailedToAuthenticate();
+                return response;
+            }
         }
 
         // GET specified number and scope of sites
         [HttpGet("{NumberOfRowsMin:int},{NumberOfRowsMax:int}")]
-        public IEnumerable<SiteOverview> Get(int NumberOfRowsMin, int NumberOfRowsMax, string AuthKey)
+        public Response<SiteOverview> Get(int NumberOfRowsMin, int NumberOfRowsMax)
         {
-            string AuthKey2 = null;
-            HttpRequestMessage re = new HttpRequestMessage();
-            var headers = re.Headers;
-            if (headers.Contains("Authorization"))
-            {
-                AuthKey2 = headers.GetValues("Authorization").First();
-            }
             Authentication Auth = new Authentication();
-            if (Auth.AuthenticateUser(AuthKey2))
+            if (Auth.AuthenticateUser(Request.Headers["Authorization"]))
             {
                 SiteOverview Overview = new SiteOverview();
                 Overview.FetchPaginatedSites(NumberOfRowsMin, NumberOfRowsMax);
-                return new SiteOverview[] { Overview };
-            } else
+                Response<SiteOverview> response = new Response<SiteOverview>();
+                response.Success = true;
+                response.Data = Overview;
+                return response;
+            }
+            else
             {
-                return null;
+                Response<SiteOverview> response = new Response<SiteOverview>();
+                response.FailedToAuthenticate();
+                return response;
             }
         }
 
         // GET sites based on search result
-        [HttpGet("{Filters:int}")] //,{CustomerNameSearch:string},{ContractManagerNameSearch:string},{DepartmentNameSearch:string}
-        public IEnumerable<SiteOverview> Get(int Filters, string SiteIDSearch, string SiteNameSearch, string CustomerNameSearch, string ContractManagerNameSearch, string DepartmentNameSearch) 
+        [HttpGet("{Filters:int}")]
+        public Response<SiteOverview> Get(int Filters, string SiteIDSearch, string SiteNameSearch, string CustomerNameSearch, string ContractManagerNameSearch, string DepartmentNameSearch) 
         {
-            SiteOverview Overview = new SiteOverview();
-            Overview.FetchSearchResults(SiteIDSearch, SiteNameSearch, CustomerNameSearch, ContractManagerNameSearch, DepartmentNameSearch, Filters); 
-            return new SiteOverview[] { Overview };
+            Authentication Auth = new Authentication();
+            if (Auth.AuthenticateUser(Request.Headers["Authorization"]))
+            {
+                SiteOverview Overview = new SiteOverview();
+                Overview.FetchSearchResults(SiteIDSearch, SiteNameSearch, CustomerNameSearch, ContractManagerNameSearch, DepartmentNameSearch, Filters);
+                Response<SiteOverview> response = new Response<SiteOverview>();
+                response.Success = true;
+                response.Data = Overview;
+                return response;
+            }
+            else
+            {
+                Response<SiteOverview> response = new Response<SiteOverview>();
+                response.FailedToAuthenticate();
+                return response;
+            }
         }
 
         // POST api/<SiteController>
