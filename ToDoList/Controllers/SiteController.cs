@@ -25,26 +25,38 @@ namespace ToDoList.Controllers
         [HttpGet("{SiteID}")]
         public Response<Site> Get(int SiteID)
         {
-            Site site = new Site();
+            Authentication Auth = new Authentication();
+            Response<string> AuthenticationResponse = new Response<string>();
+            AuthenticationResponse = Auth.AuthenticateUser(Request.Headers["Authorization"]);
             Response<Site> response = new Response<Site>();
-            if (site.GetSiteDetails(SiteID))
+            response.Success = AuthenticationResponse.Success;
+            response.ResponseMessage = AuthenticationResponse.ResponseMessage;
+            response.ErrorCodes = AuthenticationResponse.ErrorCodes;
+            if (AuthenticationResponse.Success)
             {
-                response.Success = true;
-                response.Data = site;
-            } else
-            {
-                response.FailedToContactServer();
+                Site site = new Site();
+                site.SiteID = Convert.ToString(SiteID);
+                if (site.GetSiteDetailsFromID())
+                {
+                    response.Success = true;
+                    response.Data = site;
+                }
+                else
+                {
+                    response.FailedToContactServer();
+                }
+                return response;
             }
             return response;
         }
 
         // POST create new site
-        [HttpPost]
-        public Site Post([FromBody] Site site)
-        {
-            site.CreateNewSite();
-            return site;
-        }
+        //[HttpPost]
+        //public Site Post([FromBody] Site site)
+        //{
+        //    site.CreateNewSite();
+        //    return site;
+        //}
 
         // PUT update existing site
         [HttpPut("{SiteId}")]
@@ -58,9 +70,9 @@ namespace ToDoList.Controllers
         }
 
         // DELETE delete site
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        //[HttpDelete("{id}")]
+        //public void Delete(int id)
+        //{
+        //}
     }
 }

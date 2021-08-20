@@ -13,111 +13,97 @@ namespace ToDoList.Model
         public string ContractManagerEmail { get; set; }
         public Department Department { get; set; }
 
-        public void GetContractManagers(int iNumber)
+        public Boolean GetContractManagerOverviewFromiNumber(int iNumber)
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM contractmanagers LIMIT " + iNumber + ",1";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT ContractManager_Id, ContractManager_Name FROM contractmanagers LIMIT " + iNumber + ",1;";
+            SelectReference reference = new SelectReference();
+            reference.GenericNameIdReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        ContractManagerID = reader.GetString(0);
-                        ContractManagerName = reader.GetString(1);
-                        ContractManagerEmail = reader.GetString(2);
-                        GetDepartmentData();
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
+                ContractManagerID = response.Data.Value[0];
+                ContractManagerName = response.Data.Value[1];
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve ContractManagers");
-            }
-        }
-        public string GetContractManagerName(string ContractManagerID)
-        {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM contractmanagers WHERE ContractManager_Id = '" + ContractManagerID + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        ContractManagerName = reader.GetString(1);
-                        ContractManagerEmail = reader.GetString(2);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve ContractManagerName.");
-            }
-            return ContractManagerName;
-        }
-        public string GetContractManagerId(string ContractManagerName)
-        {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM contractmanagers WHERE ContractManager_Name = '" + ContractManagerName + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        ContractManagerID = reader.GetString(0);
-                        ContractManagerEmail = reader.GetString(2);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve ContractManagerID");
-            }
-            return ContractManagerID;
+            return response.Success;
         }
 
-        public string GetDepartmentData()
+        public Boolean GetContractManagerOverviewFromID()
+        {
+            string Query = "SELECT ContractManager_Id, ContractManager_Name FROM contractmanagers WHERE ContractManager_Id = '" + ContractManagerID + "';";
+            SelectReference reference = new SelectReference();
+            reference.GenericNameIdReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
+            {
+                ContractManagerID = response.Data.Value[0];
+                ContractManagerName = response.Data.Value[1];
+            }
+            return response.Success;
+        }
+
+        public Boolean GetContractManagerOverviewFromName()
+        {
+            string Query = "SELECT ContractManager_Id, ContractManager_Name FROM contractmanagers WHERE ContractManager_Name = '" + ContractManagerName + "';";
+            SelectReference reference = new SelectReference();
+            reference.GenericNameIdReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
+            {
+                ContractManagerID = response.Data.Value[0];
+                ContractManagerName = response.Data.Value[1];
+            }
+            return response.Success;
+        }
+
+        public Boolean GetContractManagerDetailsFromName()
+        {
+            string Query = "SELECT ContractManager_Id, ContractManager_Name,ContractManager_Email, Department_Id FROM contractmanagers WHERE ContractManager_Name = '" + ContractManagerName + "';";
+            SelectReference reference = new SelectReference();
+            reference.ContractManagerReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
+            {
+                ContractManagerID = response.Data.Value[0];
+                ContractManagerName = response.Data.Value[1];
+                ContractManagerEmail = response.Data.Value[2];
+                Department = new Department();
+                Department.DepartmentID = response.Data.Value[3];
+                Department.GetDepartmentDetailsFromID();
+            }
+            return response.Success;
+        }
+
+        public Boolean GetContractManagerDetailsFromID()
+        {
+            string Query = "SELECT ContractManager_Id, ContractManager_Name,ContractManager_Email, Department_Id FROM contractmanagers WHERE ContractManager_Id = '" + ContractManagerID + "';";
+            SelectReference reference = new SelectReference();
+            reference.ContractManagerReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
+            {
+                ContractManagerID = response.Data.Value[0];
+                ContractManagerName = response.Data.Value[1];
+                ContractManagerEmail = response.Data.Value[2];
+                Department = new Department();
+                Department.DepartmentID = response.Data.Value[3];
+                Department.GetDepartmentDetailsFromID();
+            }
+            return response.Success;
+        }
+
+
+
+        public string GetDepartmentDetails()
         {
             string query = "SELECT * FROM contractmanagers WHERE ";
             if(ContractManagerID != null)
@@ -143,7 +129,7 @@ namespace ToDoList.Model
                     {
                         Department = new Department();
                         Department.DepartmentID = reader.GetString(3);
-                        Department.GetDepartmentName(Department.DepartmentID);
+                        Department.GetDepartmentDetailsFromID();
                     }
                 }
                 else
@@ -160,40 +146,21 @@ namespace ToDoList.Model
             return ContractManagerID;
         }
 
-        public string GetContractManagerDataFromDepartmentID(string DepartmentID, int i)
+        public Boolean GetContractManagerFromDepartmentIDFromiNumber(string DepartmentID, int iNumber)
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM contractmanagers WHERE Department_Id = '" + DepartmentID + "' LIMIT "+i+",1;";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT * FROM contractmanagers WHERE Department_Id = '" + DepartmentID + "' LIMIT " + iNumber + ",1;";
+            SelectReference reference = new SelectReference();
+            reference.ContractManagerReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        ContractManagerID = reader.GetString(0);
-                        ContractManagerName = reader.GetString(1);
-                        ContractManagerEmail = reader.GetString(2);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
+                ContractManagerID = response.Data.Value[0];
+                ContractManagerName = response.Data.Value[1];
+                ContractManagerEmail = response.Data.Value[2];
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve ContractManagerName.");
-            }
-            return ContractManagerName;
+            return response.Success;
         }
     }
 }

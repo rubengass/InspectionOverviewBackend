@@ -18,7 +18,7 @@ namespace ToDoList.Model
             for (int i = 0; i < NumberOfSites; i++)
             {
                 Site Object = new Site();
-                Object.GetAllSiteDataWithiNumber(i);
+                Object.GetSiteOverviewDataiNumber(i);
                 AllSites.Add(Object);
             }
         }
@@ -64,7 +64,7 @@ namespace ToDoList.Model
             for (int i = NumberOfRowsMin; i < Maxi; i++)
             {
                 Site Object = new Site();
-                Object.GetAllSiteDataWithiNumber(i);
+                Object.GetSiteOverviewDataiNumber(i);
                 AllSites.Add(Object);
             }
         }
@@ -168,11 +168,11 @@ namespace ToDoList.Model
                         Object.SiteName = reader.GetString(1);
                         Object.Customer = new Customer();
                         Object.Customer.CustomerID = reader.GetString(11);
-                        Object.Customer.GetCustomerName(Object.Customer.CustomerID);
+                        Object.Customer.GetCustomerOverviewFromID();
                         Object.ContractManager = new ContractManager();
                         Object.ContractManager.ContractManagerID = reader.GetString(12);
-                        Object.ContractManager.GetContractManagerName(Object.ContractManager.ContractManagerID);
-                        Object.ContractManager.GetDepartmentData();
+                        Object.ContractManager.GetContractManagerOverviewFromID();
+                        Object.ContractManager.GetDepartmentDetails();
                         AllSites.Add(Object);
                         NumberOfSites++;
                     }

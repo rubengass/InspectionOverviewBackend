@@ -6,15 +6,18 @@ using System.Threading.Tasks;
 
 namespace ToDoList.Model
 {
-    public class DatabaseCommandCount : DatabaseCommand
+    public class DatabaseCommandSelectTable : DatabaseCommandFetchTable
     {
-        public DatabaseCommandCount()
+        public DatabaseCommandSelectTable()
         {
         }
 
-        public override Response<string> ExecuteCommand(string ConnectionString, string Query)
+        public override Response<TableReference> ExecuteCommand(string ConnectionString, string Query, int ColNum)
         {
-            Response<string> response = new Response<string>();
+            TableReference tablereference = new TableReference();
+            Response<TableReference> response = new Response<TableReference>();
+            response.Data = tablereference;
+
             MySqlConnection databaseConnection = new MySqlConnection(ConnectionString);
             MySqlCommand commandDatabase = new MySqlCommand(Query, databaseConnection);
             commandDatabase.CommandTimeout = 60;
@@ -28,10 +31,17 @@ namespace ToDoList.Model
                 {
                     while (reader.Read())
                     {
-                        response.Data = reader.GetString(0);
+                        SelectReference reference = new SelectReference();
+                        reference.CustomReport(ColNum);
+                        for (int i = 0; i < ColNum; i++)
+                        {
+                            reference.Value.Add(reader.GetString(reference.ColumnReference[i]));
+                        }
+                        response.Data.ListOfValues.Add(reference);
                     }
                 }
                 databaseConnection.Close();
+                response.Success = true;
             }
             catch (Exception)
             {
