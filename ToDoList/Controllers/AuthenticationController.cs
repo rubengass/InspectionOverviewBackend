@@ -15,7 +15,7 @@ namespace ToDoList.Controllers
     {
         // GET DEBUG
         [HttpGet("{AuthenticationKey}")]
-        public Boolean Get(string AuthenticationKey)
+        public Response<string> Get(string AuthenticationKey)
         {
             Authentication Auth = new Authentication();
             return Auth.AuthenticateUser(AuthenticationKey);
@@ -46,18 +46,7 @@ namespace ToDoList.Controllers
         public Response<string> Delete(string AuthenticationKey)
         {
             Authentication Auth = new Authentication();
-            if (Auth.DeleteAuthenticationKey(AuthenticationKey))
-            {
-                Response<string> response = new Response<string>();
-                response.GenericSuccessCode();
-                return response;
-            }
-            else
-            {
-                Response<string> response = new Response<string>();
-                response.FailedToContactServer();
-                return response;
-            }
+            return Auth.DeleteAuthenticationKey(AuthenticationKey);
         }
     }
 }

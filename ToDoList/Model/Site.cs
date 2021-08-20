@@ -36,50 +36,33 @@ namespace ToDoList.Model
         public ContractManager ContractManager { get; set; }
 
 
-        public void GetAllSiteDataWithiNumber(int iNumber)
+        public Boolean GetSiteOverviewDataiNumber(int iNumber)
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM sites LIMIT " + iNumber + ",1";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
+            string Query = "SELECT Site_Id, Site_Name, Customer_Id, ContractManager_Id FROM sites LIMIT " + iNumber + ",1;";
+            SelectReference reference = new SelectReference();
+            reference.SiteOverviewReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
 
-            try
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        SiteID = reader.GetString(0);
-                        SiteName = reader.GetString(1);
-                        Customer = new Customer();
-                        Customer.CustomerID = reader.GetString(11);
-                        Customer.GetCustomerName(Customer.CustomerID);
-                        ContractManager = new ContractManager();
-                        ContractManager.ContractManagerID = reader.GetString(12);
-                        ContractManager.GetContractManagerName(ContractManager.ContractManagerID);
-                        ContractManager.GetDepartmentData();
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
+                SiteID = response.Data.Value[0];
+                SiteName = response.Data.Value[1];
+                Customer = new Customer();
+                Customer.CustomerID = response.Data.Value[2];
+                Customer.GetCustomerOverviewFromID();
+                ContractManager = new ContractManager();
+                ContractManager.ContractManagerID = response.Data.Value[3];
+                ContractManager.GetContractManagerOverviewFromID();
+                ContractManager.GetDepartmentDetails();
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve Sites");
-            }
+            return response.Success;
         }
 
-        public Boolean GetSiteDetails(int SiteId)
+        public Boolean GetSiteDetailsFromID()
         {
-            string Query = "SELECT * FROM sites WHERE Site_Id = '" + SiteId + "';";
+            string Query = "SELECT Site_Id, Site_Name, Site_Active_Since, Site_Contract_Start, Site_Contract_End, Site_Contact_Name, Site_Contact_Email, Site_Address_Country, Site_Address_City, Site_Address_Postal, Site_Address_Street, Customer_Id, ContractManager_Id FROM sites WHERE Site_Id = '" + SiteID + "';";
             SelectReference reference = new SelectReference();
             reference.SiteReference();
             InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
@@ -100,103 +83,29 @@ namespace ToDoList.Model
                 SiteAddressStreet = response.Data.Value[10];
                 Customer = new Customer();
                 Customer.CustomerID = response.Data.Value[11];
-                Customer.GetCustomerName(Customer.CustomerID);
+                Customer.GetCustomerDetailsFromID();
                 ContractManager = new ContractManager();
                 ContractManager.ContractManagerID = response.Data.Value[12];
-                ContractManager.GetContractManagerName(ContractManager.ContractManagerID);
-                ContractManager.GetDepartmentData();
+                ContractManager.GetContractManagerDetailsFromID();
             }
             return response.Success;
         }
 
-        public void GetSiteID(string SiteName)
-        {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM sites WHERE Site_Name = '" + SiteName + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        SiteID = reader.GetString(0);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve SiteID");
-            }
-        }
-
-        public void GetSiteName(string SiteID)
-        {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM sites WHERE Site_Id ='" + SiteID + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        SiteName = reader.GetString(1);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve SiteName");
-            }
-        }
-
-        public string CreateNewSite()
-        {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "INSERT INTO sites(Customer_Id,Department_Id,ContractManager_Id,Site_Name) values('" + Customer.GetCustomerId(Customer.CustomerName) + "','" + ContractManager.Department.DepartmentID + "','" + ContractManager.GetContractManagerId(ContractManager.ContractManagerName) + "','" + SiteName + "')";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                databaseConnection.Close();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to create a new site");
-            }
-            GetSiteID(SiteName);
-            return SiteID;
-        }
+        //public Boolean CreateNewSite()
+        //{
+        //    string Query = "INSERT INTO sites(Customer_Id,Department_Id,ContractManager_Id,Site_Name) values('" + Customer.GetCustomerOverviewFromID() + "','" + ContractManager.Department.DepartmentID + "','" + ContractManager.GetContractManagerId(ContractManager.ContractManagerName) + "','" + SiteName + "')";
+        //    InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+        //    Response<string> response = new Response<string>();
+        //    response = DBM.execute(new DatabaseCommandInsert(), Query);
+        //    if (response.Data == "1")
+        //    {
+        //        return true;
+        //    }
+        //    else
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public string GenerateUpdateQuery(int SiteId)
         {
@@ -312,7 +221,7 @@ namespace ToDoList.Model
             if(ContractManager != null){
                 if (ContractManager.ContractManagerName != null)
                 {
-                    ContractManager.GetContractManagerId(ContractManager.ContractManagerName);
+                    ContractManager.GetContractManagerOverviewFromName();
                     if (PreviousInput)
                     {
                         query = query + ", ContractManager_Id = '" + ContractManager.ContractManagerID + "'";

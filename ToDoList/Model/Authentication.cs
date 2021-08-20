@@ -138,10 +138,27 @@ namespace ToDoList.Model
             }
         }
 
-        public Boolean AuthenticateUser(string AuthKey)
+        public Response<string> AuthenticateUser(string AuthKey)
         {
-            RemoveExpiredKeys();
-            return AuthenticationKeyIsValid(AuthKey);
+            Response<string> response = new Response<string>();
+            if (AuthenticationKeyIsValid(AuthKey))
+            {
+                RemoveExpiredKeys();
+                if (AuthenticationKeyIsValid(AuthKey))
+                {
+                    response.GenericSuccessCode();
+                    return response;
+                } else
+                {
+                    response.ExpiredAuthentication();
+                    return response;
+                }
+            } else
+            {
+                RemoveExpiredKeys();
+                response.FailedToAuthenticate();
+                return response;
+            }
         }
 
         private bool AuthenticationKeyIsValid(string AuthKey)
@@ -159,7 +176,7 @@ namespace ToDoList.Model
             }
         }
 
-        public bool DeleteAuthenticationKey(string AuthKey)
+        public Response<string> DeleteAuthenticationKey(string AuthKey)
         {
             RemoveExpiredKeys();
             string Query = "DELETE FROM tempkeys WHERE AuthenticationKey = '" + AuthKey + "';";
@@ -168,11 +185,13 @@ namespace ToDoList.Model
             response = DBM.execute(new DatabaseCommandDelete(), Query);
             if (response.Success)
             {
-                return true;
+                response.GenericSuccessCode();
+                return response;
             }
             else
             {
-                return false;
+                response.FailedToContactServer();
+                return response;
             }
         }
     }

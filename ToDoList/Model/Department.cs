@@ -14,145 +14,75 @@ namespace ToDoList.Model
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<ContractManager> ContractManagers { get; set; }
 
-        public string GetDepartmentId(string DepartmentName)
+        public Boolean GetDepartmentDetailsFromID()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM departments WHERE Department_Name ='" + DepartmentName + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT Department_Id, Department_Name FROM departments WHERE Department_Id = '" + DepartmentID + "';";
+            SelectReference reference = new SelectReference();
+            reference.DepartmentReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        DepartmentID = reader.GetString(0);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
+                DepartmentID = response.Data.Value[0];
+                DepartmentName = response.Data.Value[1];
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve DepartmentID");
-            }
-            return DepartmentID;
+            return response.Success;
         }
 
-        public string GetDepartmentName(string DepartmentID)
+        public Boolean GetDepartmentDetailsFromName()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM departments WHERE Department_Id ='" + DepartmentID + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT Department_Id, Department_Name FROM departments WHERE Department_Name = '" + DepartmentName + "';";
+            SelectReference reference = new SelectReference();
+            reference.DepartmentReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        DepartmentName = reader.GetString(1);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
+                DepartmentID = response.Data.Value[0];
+                DepartmentName = response.Data.Value[1];
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve DepartmentName");
-            }
-            return DepartmentName;
+            return response.Success;
         }
 
-        public void GetAllDepartments(int iNumber)
+        public Boolean GetDepartmentOverviewFromiNumber(int iNumber)
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM departments LIMIT " + iNumber + ",1";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT Department_Id, Department_Name FROM departments LIMIT " + iNumber + ",1;";
+            SelectReference reference = new SelectReference();
+            reference.DepartmentReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
+                DepartmentID = response.Data.Value[0];
+                DepartmentName = response.Data.Value[1];
+                ContractManagers = new List<ContractManager>();
+                int NumberOfContractManagers = CountNumberOfContractManagersInDepartment();
+                for (int i =0; i< NumberOfContractManagers; i++)
                 {
-                    while (reader.Read())
-                    {
-                        DepartmentID = reader.GetString(0);
-                        DepartmentName = reader.GetString(1);
-                        ContractManagers = new List<ContractManager>();
-                        int NumberOfRecords = GetNumberOfContractManagersForDepartment(DepartmentID);
-                        for (int i = 0; i < NumberOfRecords; i++)
-                        {
-                            ContractManager Object = new ContractManager();
-                            Object.GetContractManagerDataFromDepartmentID(DepartmentID,i);
-                            ContractManagers.Add(Object);
-                        }
-                    }
+                    ContractManager Object = new ContractManager();
+                    Object.GetContractManagerFromDepartmentIDFromiNumber(DepartmentID, i);
+                    ContractManagers.Add(Object);
                 }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve Contract Manager Info");
-            }
+            return response.Success;
         }
 
-        public int GetNumberOfContractManagersForDepartment(string DepartmentID)
+        public int CountNumberOfContractManagersInDepartment()
         {
-            int NumberOfRecords = 0;
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT COUNT(*) FROM contractmanagers WHERE Department_Id = '"+DepartmentID+"';";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT COUNT(*) FROM contractmanagers WHERE Department_Id = '" + DepartmentID + "';";
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            response = DBM.execute(new DatabaseCommandCount(), Query);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        string Count = reader.GetString(0);
-                        NumberOfRecords = Int32.Parse(Count);
-                    }
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception)
+                return Convert.ToInt32(response.Data);
+            } else
             {
-                Console.WriteLine("Failed to get the number of filtered sites.");
+                return 0;
             }
-            return NumberOfRecords;
         }
     }
 }

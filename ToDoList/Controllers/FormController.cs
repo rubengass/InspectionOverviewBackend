@@ -15,42 +15,34 @@ namespace ToDoList.Controllers
     {
         // GET all departments and customers
         [HttpGet]
-        public IEnumerable<Form> Get()
+        public Response<Form> Get()
         {
-            Form Result = new Form();
-            Result.GetAllDepartmentNames();
-            Result.GetAllCustomerNames();
-            Result.GetContractManagerNames();
-            return new Form[] { Result };
+            Authentication Auth = new Authentication();
+            Response<string> AuthenticationResponse = new Response<string>();
+            AuthenticationResponse = Auth.AuthenticateUser(Request.Headers["Authorization"]);
+            Response<Form> response = new Response<Form>();
+            response.Success = AuthenticationResponse.Success;
+            response.ResponseMessage = AuthenticationResponse.ResponseMessage;
+            response.ErrorCodes = AuthenticationResponse.ErrorCodes;
+            if (AuthenticationResponse.Success)
+            {
+                Form Result = new Form();
+                Result.ListOfDepartmentsByOverview();
+                Result.ListOfCustomersByOverview();
+                Result.ListOfContractManagersByOverview();
+                response.Data = Result;
+                return response;
+            }
+            return response;
         }
 
         // GET all Contract managers for a certain department
-        [HttpGet("{DepartmentName}")]
-        public IEnumerable<Form> Get(string DepartmentName)
-        {
-            Form Result = new Form();
-            Result.GetContractManagerNames();
-            return new Form[] { Result };
-        }
-
-        // POST new site
-        //[HttpPost]
-        //public Site Post([FromBody] Site site)
+        //[HttpGet("{DepartmentName}")]
+        //public IEnumerable<Form> Get(string DepartmentName)
         //{
-        //    site.CreateNewSite();
-        //    return site;
-        //}
-
-        //// PUT api/<DepartmentsController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE api/<DepartmentsController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
+        //    Form Result = new Form();
+        //    Result.GetContractManagerNames();
+        //    return new Form[] { Result };
         //}
     }
 }

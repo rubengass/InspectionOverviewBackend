@@ -15,25 +15,19 @@ namespace ToDoList.Controllers
     [ApiController]
     public class SiteOverviewController : ControllerBase
     {
+
         // GET all sites
         [HttpGet]
         public Response<SiteOverview> Get()
         {
             Authentication Auth = new Authentication();
-            if (Auth.AuthenticateUser(Request.Headers["Authorization"]))
-            {
-                SiteOverview Overview = new SiteOverview();
-                Overview.FetchAllSites();
-                Response<SiteOverview> response = new Response<SiteOverview>();
-                response.Success = true;
-                response.Data = Overview;
-                return response;
-            } else
-            {
-                Response<SiteOverview> response = new Response<SiteOverview>();
-                response.FailedToAuthenticate();
-                return response;
-            }
+            Response<string> AuthenticationResponse = new Response<string>();
+            AuthenticationResponse = Auth.AuthenticateUser(Request.Headers["Authorization"]);
+            Response<SiteOverview> response = new Response<SiteOverview>();
+            response.Success = AuthenticationResponse.Success;
+            response.ResponseMessage = AuthenticationResponse.ResponseMessage;
+            response.ErrorCodes = AuthenticationResponse.ErrorCodes;
+            return response;
         }
 
         // GET specified number and scope of sites
@@ -41,21 +35,20 @@ namespace ToDoList.Controllers
         public Response<SiteOverview> Get(int NumberOfRowsMin, int NumberOfRowsMax)
         {
             Authentication Auth = new Authentication();
-            if (Auth.AuthenticateUser(Request.Headers["Authorization"]))
+            Response<string> AuthenticationResponse = new Response<string>();
+            AuthenticationResponse = Auth.AuthenticateUser(Request.Headers["Authorization"]);
+            Response<SiteOverview> response = new Response<SiteOverview>();
+            response.Success = AuthenticationResponse.Success;
+            response.ResponseMessage = AuthenticationResponse.ResponseMessage;
+            response.ErrorCodes = AuthenticationResponse.ErrorCodes;
+            if (AuthenticationResponse.Success)
             {
                 SiteOverview Overview = new SiteOverview();
                 Overview.FetchPaginatedSites(NumberOfRowsMin, NumberOfRowsMax);
-                Response<SiteOverview> response = new Response<SiteOverview>();
-                response.Success = true;
                 response.Data = Overview;
                 return response;
             }
-            else
-            {
-                Response<SiteOverview> response = new Response<SiteOverview>();
-                response.FailedToAuthenticate();
-                return response;
-            }
+            return response;
         }
 
         // GET sites based on search result
@@ -63,7 +56,7 @@ namespace ToDoList.Controllers
         public Response<SiteOverview> Get(int Filters, string SiteIDSearch, string SiteNameSearch, string CustomerNameSearch, string ContractManagerNameSearch, string DepartmentNameSearch) 
         {
             Authentication Auth = new Authentication();
-            if (Auth.AuthenticateUser(Request.Headers["Authorization"]))
+            if (Auth.AuthenticateUser(Request.Headers["Authorization"]).Success)
             {
                 SiteOverview Overview = new SiteOverview();
                 Overview.FetchSearchResults(SiteIDSearch, SiteNameSearch, CustomerNameSearch, ContractManagerNameSearch, DepartmentNameSearch, Filters);
@@ -80,22 +73,5 @@ namespace ToDoList.Controllers
             }
         }
 
-        // POST api/<SiteController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-
-        //// PUT api/<SiteController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
-
-        //// DELETE api/<SiteController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
     }
 }

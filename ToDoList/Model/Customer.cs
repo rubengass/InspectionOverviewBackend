@@ -25,148 +25,96 @@ namespace ToDoList.Model
         public string CustomerAddressStreet { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string AccountManagerID { get; set; }
-
-
-        public string GetCustomerName(string CustomerID)
+        public Boolean GetCustomerDetailsFromID()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM customers WHERE Customer_Id = '" + CustomerID + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT Customer_Id, Customer_Name, Customer_Contact_Name, Customer_Contact_Email, Customer_Address_Country, Customer_Address_City, Customer_Address_Postal, Customer_Address_Street FROM customers WHERE Customer_Id = '" + CustomerID + "';";
+            SelectReference reference = new SelectReference();
+            reference.CustomerReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        CustomerName = reader.GetString(1);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
+                CustomerID = response.Data.Value[0];
+                CustomerName = response.Data.Value[1];
+                CustomerContactName = response.Data.Value[2];
+                CustomerContactEmail = response.Data.Value[3];
+                CustomerAddressCountry = response.Data.Value[4];
+                CustomerAddressCity = response.Data.Value[5];
+                CustomerAddressPostal = response.Data.Value[6];
+                CustomerAddressStreet = response.Data.Value[7];
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve CustomerName");
-            }
-            return CustomerName;
-        }
-        public string GetCustomerDetailsFromID(string CustomerID)
-        {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM customers WHERE Customer_Id = '" + CustomerID + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
-            {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        CustomerName = reader.GetString(1);
-                        CustomerContactName = reader.GetString(2);
-                        CustomerContactEmail = reader.GetString(3);
-                        CustomerAddressCountry = reader.GetString(4);
-                        CustomerAddressCity = reader.GetString(5);
-                        CustomerAddressPostal = reader.GetString(6);
-                        CustomerAddressStreet = reader.GetString(7);
-                        AccountManagerID = reader.GetString(8);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve CustomerName");
-            }
-            return CustomerName;
+            return response.Success;
         }
 
-        public string GetCustomerId(string CustomerName)
+        public Boolean GetCustomerDetailsFromName()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM customers WHERE Customer_Name = '" + CustomerName + "'";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT Customer_Id, Customer_Name, Customer_Contact_Name, Customer_Contact_Email, Customer_Address_Country, Customer_Address_City, Customer_Address_Postal, Customer_Address_Street FROM customers WHERE Customer_Name = '" + CustomerName + "';";
+            SelectReference reference = new SelectReference();
+            reference.CustomerReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        CustomerID = reader.GetString(0);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
-
-                }
-                databaseConnection.Close();
+                CustomerID = response.Data.Value[0];
+                CustomerName = response.Data.Value[1];
+                CustomerContactName = response.Data.Value[2];
+                CustomerContactEmail = response.Data.Value[3];
+                CustomerAddressCountry = response.Data.Value[4];
+                CustomerAddressCity = response.Data.Value[5];
+                CustomerAddressPostal = response.Data.Value[6];
+                CustomerAddressStreet = response.Data.Value[7];
             }
-            catch (Exception)
-            {
-                Console.WriteLine("Failed to retrieve CustomerID");
-            }
-            return CustomerID;
+            return response.Success;
         }
 
-        public void GetAllCustomers(int iNumber)
+        public Boolean GetCustomerOverviewFromID()
         {
-            string connectionString = "datasource=127.0.0.1;port=3306;username=root;password=;database=inspectiondatabase;sslmode=none;";
-            string query = "SELECT * FROM customers LIMIT " + iNumber + ",1";
-            MySqlConnection databaseConnection = new MySqlConnection(connectionString);
-            MySqlCommand commandDatabase = new MySqlCommand(query, databaseConnection);
-            commandDatabase.CommandTimeout = 60;
-            MySqlDataReader reader;
-
-            try
+            string Query = "SELECT Customer_Id, Customer_Name FROM customers WHERE Customer_Id = '" + CustomerID + "';";
+            SelectReference reference = new SelectReference();
+            reference.GenericNameIdReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                databaseConnection.Open();
-                reader = commandDatabase.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        CustomerID = reader.GetString(0);
-                        CustomerName = reader.GetString(1);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No rows found");
+                CustomerID = response.Data.Value[0];
+                CustomerName = response.Data.Value[1];
+            }
+            return response.Success;
+        }
 
-                }
-                databaseConnection.Close();
-            }
-            catch (Exception)
+        public Boolean GetCustomerOverviewFromName()
+        {
+            string Query = "SELECT Customer_Id, Customer_Name FROM customers WHERE Customer_Name = '" + CustomerName + "';";
+            SelectReference reference = new SelectReference();
+            reference.GenericNameIdReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                Console.WriteLine("Failed to retrieve Customers");
+                CustomerID = response.Data.Value[0];
+                CustomerName = response.Data.Value[1];
             }
+            return response.Success;
+        }
+
+        public Boolean GetCustomerOverviewFromiNumber(int iNumber)
+        {
+            string Query = "SELECT Customer_Id, Customer_Name FROM customers LIMIT " + iNumber + ",1;";
+            SelectReference reference = new SelectReference();
+            reference.GenericNameIdReference();
+            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
+            {
+                CustomerID = response.Data.Value[0];
+                CustomerName = response.Data.Value[1];
+            }
+            return response.Success;
         }
     }
 }

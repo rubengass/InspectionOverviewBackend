@@ -33,5 +33,12 @@ namespace ToDoList.Model
             response = Command.ExecuteCommand(ConnectionString, Query, reference);
             return response;
         }
+
+        public Response<TableReference> fetchtable(DatabaseCommandFetchTable Command, string Query, int ColNum)
+        {
+            Response<TableReference> response = new Response<TableReference>();
+            response = Command.ExecuteCommand(ConnectionString, Query, ColNum);
+            return response;
+        }
     }
 }
