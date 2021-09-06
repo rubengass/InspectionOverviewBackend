@@ -31,13 +31,12 @@ namespace ToDoList.Model
                 {
                     while (reader.Read())
                     {
-                        SelectReference reference = new SelectReference();
-                        reference.CustomReport(ColNum);
+                        RowReference reference = new RowReference();
                         for (int i = 0; i < ColNum; i++)
                         {
-                            reference.Value.Add(reader.GetString(reference.ColumnReference[i]));
+                            reference.Row.Add(reader.GetString(i));
                         }
-                        response.Data.ListOfValues.Add(reference);
+                        response.Data.Rows.Add(reference);
                     }
                 }
                 databaseConnection.Close();

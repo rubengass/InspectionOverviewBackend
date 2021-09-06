@@ -32,7 +32,14 @@ namespace ToDoList.Model
                         response.Success = true;
                         for (int i = 0; i< response.Data.ColumnReference.Count; i++)
                         {
-                            response.Data.Value.Add(reader.GetString(response.Data.ColumnReference[i]));
+                            if (!reader.IsDBNull(response.Data.ColumnReference[i]))
+                            {
+                                response.Data.Value.Add(reader.GetString(response.Data.ColumnReference[i]));
+                            }
+                            else
+                            {
+                                response.Data.Value.Add(null);
+                            }
                         }
                     }
                 }

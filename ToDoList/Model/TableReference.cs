@@ -7,12 +7,11 @@ namespace ToDoList.Model
 {
     public class TableReference
     {
-        public List<SelectReference> ListOfValues { get; set; }
+        public List<RowReference> Rows { get; set; }
 
         public TableReference()
         {
-            ListOfValues = new List<SelectReference>();
+            Rows = new List<RowReference>();
         }
-
     }
 }

@@ -9,48 +9,76 @@ using ToDoList.Model;
 
 namespace ToDoList.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/CustomReport")]
     [ApiController]
     public class CustomReportController : ControllerBase
     {
-        // Get a list of elements which can be in the report
+        // Get all reports
         [HttpGet]
-        public Response<CustomReport> Get()
+        public Response<List<CustomReport>> Get()
         {
             Authentication Auth = new Authentication();
             Response<string> AuthenticationResponse = new Response<string>();
             AuthenticationResponse = Auth.AuthenticateUser(Request.Headers["Authorization"]);
-            Response<CustomReport> response = new Response<CustomReport>();
+            Response<List<CustomReport>> response = new Response<List<CustomReport>>();
             response.Success = AuthenticationResponse.Success;
             response.ResponseMessage = AuthenticationResponse.ResponseMessage;
             response.ErrorCodes = AuthenticationResponse.ErrorCodes;
-            if (AuthenticationResponse.Success)
+            if (response.Success)
             {
-                CustomReport Report = new CustomReport();
-                Report.GetReportRowElements();
-                Report.GetKPIOptions();
-                response.Data = Report;
-                return response;
+                string UserId = Auth.GetUserId(Request.Headers["Authorization"]);
+                List<CustomReport> customreports = new List<CustomReport>();
+                string Query = "SELECT COUNT(*) FROM customreports WHERE UserId = " + UserId + ";";
+                UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
+                string Count = UDBM.execute(new DatabaseCommandCount(), Query).Data;
+                for (int i = 0; i < Convert.ToInt32(Count); i++)
+                {
+                    CustomReport Object = new CustomReport();
+                    Object.GetCustomReportData(UserId, i);
+                    customreports.Add(Object);
+                }
+                response.Data = customreports;
+                response.GenericSuccessCode();
             }
             return response;
         }
 
-        // PUT api/<CustomReportController>/5
-        [HttpPut("{NumberOfRows}")]
-        public Response<CustomReport> Put(int NumberOfRows, [FromBody] CustomReport Report)
+        // Get CustomReport
+        [HttpGet("{TableName}")]
+        public Response<TableReference> Get(string TableName)
+        {
+            Response<TableReference> response = new Response<TableReference>();
+            CustomReport report = new CustomReport();
+            if (report.CheckForUpdate(TableName))
+            {
+                CustomReportCreator creator = new CustomReportCreator();
+                report.DeleteCustomReportTable(TableName);
+                creator.CreateCustomReport(report.GetReportQuery(TableName), TableName);
+                report.UpdateUpdateCycle(TableName);
+            }
+            report.UpdateAccessDetails(TableName);
+            if(report.GetCustomReport(TableName))
+            {
+                response.Data = report.tablereference;
+                response.GenericSuccessCode();
+            } else
+            {
+                response.FailedToContactServer();
+            }
+            return response;
+        }
+
+        // Delete the report
+        [HttpDelete("{TableName}")]
+        public Response<string> Delete(string TableName)
         {
             Authentication Auth = new Authentication();
-            Response<string> AuthenticationResponse = new Response<string>();
-            AuthenticationResponse = Auth.AuthenticateUser(Request.Headers["Authorization"]);
-            Response<CustomReport> response = new Response<CustomReport>();
-            response.Success = AuthenticationResponse.Success;
-            response.ResponseMessage = AuthenticationResponse.ResponseMessage;
-            response.ErrorCodes = AuthenticationResponse.ErrorCodes;
-            if (AuthenticationResponse.Success)
+            Response<string> response = new Response<string>();
+            response = Auth.AuthenticateUser(Request.Headers["Authorization"]);
+            if (response.Success)
             {
-                Report.RunCustomReport();
-                response.Data = Report;
-                return response;
+                CustomReport report = new CustomReport();
+                report.DeleteCustomReport(TableName);
             }
             return response;
         }

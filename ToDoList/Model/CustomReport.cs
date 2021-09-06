@@ -7,154 +7,126 @@ namespace ToDoList.Model
 {
     public class CustomReport
     {
-        public List<GenericNameIdClass> ReportRowElements { get; set; }
-        public List<string> KPIOptions { get; set; }
-        public string KPI { get; set; }
+        public string CustomReportId { get; set; }
+        public string ReportType { get; set; }
+        public string ReportName { get; set; }
+        public string TableName { get; set; }
+        public string TableQuery { get; set; }
+        public string TableSize { get; set; }
+        public string LastUpdated { get; set; }
+        public string LastAccessed { get; set; }
+        public string NextUpdate { get; set; }
         public TableReference tablereference { get; set; }
-        public List<string> TableList { get; set; }
-        public List<string> OrderedTableList { get; set; }
-        public List<string> FieldsList { get; set; }
 
-        public CustomReport()
-        {
-            TableList = new List<string>();
-            OrderedTableList = new List<string>();
-            FieldsList = new List<string>();
-        }
 
-        public void GetReportRowElements()
+        public Boolean GetCustomReportData(string UserId, int i)
         {
-            string CountQuery = "SELECT COUNT(*) FROM datastructure WHERE DataModelRole != 'Foreign';";
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
-            Response<string> response = new Response<string>();
-            response = DBM.execute(new DatabaseCommandCount(), CountQuery);
-            ReportRowElements = new List<GenericNameIdClass>();
+            string Query = "SELECT ReportName, TableName, Query, TableSize, LastUpdated, LastAccessed, NextUpdate, ReportType, CustomReportId FROM customreports WHERE UserId = '" + UserId + "' LIMIT "+i + ",1;";
             SelectReference reference = new SelectReference();
-            for (int i = 0; i < Convert.ToInt32(response.Data); i++)
+            reference.CustomReportReference();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = UDBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Success)
             {
-                string Query = "SELECT FieldReference_Id, ExternalName FROM datastructure WHERE DataModelRole != 'Foreign' ORDER BY ExternalName ASC LIMIT " +i+",1;";
-                GenericNameIdClass Object = new GenericNameIdClass();
-                Object.GetDataFromiNumber(Query);
-                ReportRowElements.Add(Object);
+                ReportName = response.Data.Value[0];
+                TableName = response.Data.Value[1];
+                TableQuery = response.Data.Value[2];
+                TableSize = response.Data.Value[3];
+                LastUpdated = response.Data.Value[4];
+                LastAccessed = response.Data.Value[5];
+                NextUpdate = response.Data.Value[6];
+                ReportType = response.Data.Value[7];
+                CustomReportId = response.Data.Value[8];
             }
+            return response.Success;
+        }
+        public void DeleteCustomReport(string TableName)
+        {
+            string DeleteEntryQuery = "DELETE FROM customreports WHERE TableName = '" + TableName + "';";
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
+            UDBM.execute(new DatabaseCommandDelete(), DeleteEntryQuery);
+            string DeleteTableQuery = "DROP TABLE "+TableName+";";
+            ReportDatabaseManager RDBM = ReportDatabaseManager.getInstance();
+            RDBM.execute(new DatabaseCommandDelete(), DeleteTableQuery);
         }
 
-        public void GetKPIOptions()
+        public Boolean GetCustomReport(string TableName)
         {
-            KPIOptions = new List<string>();
-            string CountQuery = "SELECT COUNT(DISTINCT TableName) FROM datastructure;";
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
-            Response<string> response = new Response<string>();
-            response = DBM.execute(new DatabaseCommandCount(), CountQuery);
-            SelectReference reference = new SelectReference();
-            for (int i = 0; i < Convert.ToInt32(response.Data); i++)
-            {
-                string Query = "SELECT DISTINCT(TableName) FROM datastructure LIMIT " + i + ",1;";
-                SelectReference selectref = new SelectReference();
-                selectref.SingleReturnReference();
-                Response<SelectReference> responseselect = new Response<SelectReference>();
-                responseselect = DBM.fetch(new DatabaseCommandSelect(), Query, selectref);
-                if (response.Success)
-                {
-                    KPIOptions.Add(responseselect.Data.Value[0]);
-                }
-            }
-        }
-        public void RunCustomReport()
-        {
-            string Query = BuildQuery();
-            SelectReference reference = new SelectReference();
-            reference.GenericNameIdReference();
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            ReportDatabaseManager RDBM = ReportDatabaseManager.getInstance();
             Response<TableReference> response = new Response<TableReference>();
-            response = DBM.fetchtable(new DatabaseCommandSelectTable(), Query, ReportRowElements.Count()+1);
-            tablereference = response.Data;
+            tablereference = new TableReference();
+            string CountQuery = "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'customreportsdatabase' AND table_name = '"+TableName + "';";
+            int Colnum = Convert.ToInt32(RDBM.execute(new DatabaseCommandCount(), CountQuery).Data);
+            string HeaderQuery = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'customreportsdatabase' AND table_name = '" + TableName + "';";
+            response = RDBM.fetchtable(new DatabaseCommandSelectTable(), HeaderQuery, 1);
+            RowReference HeaderList = new RowReference();
+            for (int i = 0; i < Colnum; i++)
+            {
+                HeaderList.Row.Add(response.Data.Rows[i].Row[0]);
+            }
+            tablereference.Rows.Add(HeaderList);
+            string Query = "SELECT * FROM " + TableName +";";
+            response = RDBM.fetchtable(new DatabaseCommandSelectTable(), Query, Colnum);
+            tablereference.Rows.AddRange(response.Data.Rows);
+            return response.Success;
         }
 
-        private string BuildQuery()
+        public Boolean CheckForUpdate(string TableName)
         {
-            string Query = null;
-            List<string> FieldsList = new List<string>();
-            List<string> TableList = new List<string>();
-            string TableJoins = null;
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
-            // Fields
-            for (int i = 0; i < ReportRowElements.Count; i++)
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
+            string CountQuery = "SELECT COUNT(*) FROM customreports WHERE TableName = '" + TableName + "' AND NextUpdate < '"+ DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "';";
+            int Colnum = Convert.ToInt32(UDBM.execute(new DatabaseCommandCount(), CountQuery).Data);
+            if(Colnum > 0)
             {
-                SelectReference reference = new SelectReference();
-                reference.CustomReportFields();
-                Response<SelectReference> response = new Response<SelectReference>();
-                string FieldsQuery = "SELECT SQLPath,TableName,DataModelRole FROM datastructure WHERE FieldReference_Id = " + ReportRowElements[i].ID + ";";
-                response = DBM.fetch(new DatabaseCommandSelect(), FieldsQuery, reference);
-                FieldsList.Add(response.Data.Value[0]);
-                if (!TableList.Contains(response.Data.Value[1]))
-                {
-                    TableList.Add(response.Data.Value[1]);
-                }
-            }
-            if (!TableList.Contains(KPI))
+                return true;
+            } else
             {
-                TableList.Add(KPI);
+                return false;
             }
-            if (TableList.Count() > 1)
+        }
+
+        public void UpdateAccessDetails(string TableName)
+        {
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
+            Response<string> response = new Response<string>();
+            string Query = "UPDATE customreports SET LastAccessed = '" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "' WHERE TableName = '"+TableName+"';";
+            UDBM.execute(new DatabaseCommandUpdate(), Query);
+        }
+
+        public string GetReportQuery(string TableName)
+        {
+            string Query = "SELECT Query FROM customreports WHERE TableName = '" + TableName + "';";
+            SelectReference reference = new SelectReference();
+            reference.SingleReturnReference();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = UDBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Data.Value.Count() != 0)
             {
-                if (TableList.Contains("inspections"))
-                {
-                    TableJoins += " INNER JOIN accountmanagers ON departments.Department_Id = accountmanagers.Department_Id";
-                    TableJoins += " INNER JOIN customers ON customers.AccountManager_Id = accountmanagers.AccountManager_Id";
-                    TableJoins += " INNER JOIN sites ON sites.Customer_Id = customers.Customer_Id";
-                    TableJoins += " INNER JOIN inspections ON inspections.Site_Id = sites.Site_Id";
-                } else if (TableList.Contains("sites"))
-                {
-                    TableJoins += " INNER JOIN accountmanagers ON departments.Department_Id = accountmanagers.Department_Id";
-                    TableJoins += " INNER JOIN customers ON customers.AccountManager_Id = accountmanagers.AccountManager_Id";
-                    TableJoins += " INNER JOIN sites ON sites.Customer_Id = customers.Customer_Id";
-                } else if (TableList.Contains("customers"))
-                {
-                    TableJoins += " INNER JOIN accountmanagers ON departments.Department_Id = accountmanagers.Department_Id";
-                    TableJoins += " INNER JOIN customers ON customers.AccountManager_Id = accountmanagers.AccountManager_Id";
-                } else
-                {
-                    TableJoins += " INNER JOIN accountmanagers ON departments.Department_Id = accountmanagers.Department_Id";
-                }
-                if (TableList.Contains("contractmanagers"))
-                {
-                    TableJoins += " INNER JOIN contractmanagers ON departments.Department_Id = contractmanagers.Department_Id";
-                }
-                if (TableList.Contains("serviceengineers"))
-                {
-                    TableJoins += " INNER JOIN serviceengineers ON departments.Department_Id = serviceengineers.Department_Id";
-                }
-                TableList[0] = "departments";
+                return response.Data.Value[0];
             }
-            string CountType = null;
-            switch (KPI)
+            else
             {
-                case "sites":
-                    CountType = "sites.Site_Id";
-                    break;
-                case "customers":
-                    CountType = "customers.Customer_Id";
-                    break;
-                case "accountmanagers":
-                    CountType = "accountmanagers.AccountManager_Id";
-                    break;
-                case "contractmanagers":
-                    CountType = "contractmanagers.ContractManager_Id";
-                    break;
-                case "serviceengineers":
-                    CountType = "serviceengineers.ServiceEngineer_Id";
-                    break;
-                case "departments":
-                    CountType = "departments.Department_Id";
-                    break;
-                case "inspections":
-                    CountType = "inspections.Inspection_Id";
-                    break;
+                return null;
             }
-            string Fields = string.Join(", ", FieldsList.ToArray());
-            Query = "SELECT " + Fields + ", COUNT(" + CountType + ") AS Count FROM " + TableList[0] + TableJoins + " GROUP BY " + Fields +";";
-            return Query;
+        }
+
+        public void DeleteCustomReportTable(string TableName)
+        {
+            string Query = "DROP TABLE customreportsdatabase." + TableName + ";";
+            ReportDatabaseManager RDBM = ReportDatabaseManager.getInstance();
+            RDBM.execute(new DatabaseCommandDelete(), Query);
+        }
+
+        public void UpdateUpdateCycle(string TableName)
+        {
+            ReportDatabaseManager RDBM = ReportDatabaseManager.getInstance();
+            string SizeQuery = "SELECT ROUND((DATA_LENGTH + INDEX_LENGTH)/1024,2) FROM information_schema.TABLES WHERE table_schema = 'customreportsdatabase' AND TABLE_NAME = '" + TableName + "';";
+            string TableSize = RDBM.execute(new DatabaseCommandCount(), SizeQuery).Data;
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
+            string Query = "UPDATE customreports SET LastUpdated = '" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "', NextUpdate ='" + DateTime.UtcNow.AddDays(1).ToString("yyyy-MM-ddTHH:mm:ss") + "', TableSize = "+TableSize+" WHERE TableName = '" + TableName + "';";
+            UDBM.execute(new DatabaseCommandUpdate(), Query);
         }
     }
 }
