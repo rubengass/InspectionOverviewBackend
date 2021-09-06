@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ToDoList.Model
 {
     public class SelectReference
     {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<string> Key { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<int> ColumnReference { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public List<string> Value { get; set; }
 
         public SelectReference()
@@ -76,6 +80,39 @@ namespace ToDoList.Model
             ColumnReference.Add(11);
             Key.Add("ContractManager_Id");
             ColumnReference.Add(12);
+        }
+
+        public void CustomReportReference()
+        {
+            // Return List<string> Value references:
+            // [0] = ReportName
+            // [1] = TableName
+            // [2] = TableQuery
+            // [3] = TableSize
+            // [4] = LastUpdated
+            // [5] = LastAccessed
+            // [6] = NextUpdate
+            // [7] = ReportType
+            // [8] = CustomReportID
+
+            Key.Add("ReportName");
+            ColumnReference.Add(0);
+            Key.Add("TableName");
+            ColumnReference.Add(1);
+            Key.Add("TableQuery");
+            ColumnReference.Add(2);
+            Key.Add("TableSize");
+            ColumnReference.Add(3);
+            Key.Add("LastUpdated");
+            ColumnReference.Add(4);
+            Key.Add("LastAccessed");
+            ColumnReference.Add(5);
+            Key.Add("NextUpdate");
+            ColumnReference.Add(6);
+            Key.Add("ReportType");
+            ColumnReference.Add(7);
+            Key.Add("CustomReportID");
+            ColumnReference.Add(8);
         }
 
         public void SiteOverviewReference()
@@ -191,15 +228,22 @@ namespace ToDoList.Model
             Key.Add("DataModelRole");
             ColumnReference.Add(2);
         }
-        public void CustomReport(int ColNum)
+        public void CustomReportFilter()
         {
             // Return List<string> Value references:
-            // [Colnum] = Column Colnum
-            for (int i = 0; i < ColNum; i++)
-            {
-                Key.Add("Column " + i);
-                ColumnReference.Add(i);
-            }
+            // [0] = FieldName
+            // [1] = DataType
+            // [2] = FieldTable
+            // [3] = InternalName
+
+            Key.Add("FieldName");
+            ColumnReference.Add(0);
+            Key.Add("DataType");
+            ColumnReference.Add(1);
+            Key.Add("FieldTable");
+            ColumnReference.Add(2);
+            Key.Add("InternalName");
+            ColumnReference.Add(3);
         }
     }
 }

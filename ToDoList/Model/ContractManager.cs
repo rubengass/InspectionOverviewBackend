@@ -101,8 +101,6 @@ namespace ToDoList.Model
             return response.Success;
         }
 
-
-
         public string GetDepartmentDetails()
         {
             string query = "SELECT * FROM contractmanagers WHERE ";

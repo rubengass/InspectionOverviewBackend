@@ -31,13 +31,38 @@ namespace ToDoList.Model
             string Query = "SELECT * FROM login WHERE Username = '" + _Username + "' AND Password = '"+_Password+"';";
             SelectReference reference = new SelectReference();
             reference.LoginReference();
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
             Response<SelectReference> response = new Response<SelectReference>();
-            response = DBM.fetch(new DatabaseCommandSelect(), Query, reference);
-            _UserId = Convert.ToInt32(response.Data.Value[0]);
-            _Username = response.Data.Value[1];
-            _Password = response.Data.Value[2];
-            return response.Success;
+            response = UDBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if(response.Data.Value.Count() != 0)
+            {
+                _UserId = Convert.ToInt32(response.Data.Value[0]);
+                _Username = response.Data.Value[1];
+                _Password = response.Data.Value[2];
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public string GetUserId(string AuthKey)
+        {
+            string Query = "SELECT UserId FROM tempkeys WHERE AuthenticationKey = '" + AuthKey + "';";
+            SelectReference reference = new SelectReference();
+            reference.SingleReturnReference();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
+            Response<SelectReference> response = new Response<SelectReference>();
+            response = UDBM.fetch(new DatabaseCommandSelect(), Query, reference);
+            if (response.Data.Value.Count() != 0)
+            {
+                return response.Data.Value[0];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public string Login()
@@ -57,9 +82,9 @@ namespace ToDoList.Model
         private Boolean AuthenticationKeyExistsForUser()
         {
             string Query = "SELECT COUNT(*) FROM tempkeys WHERE UserId = '" + _UserId + "';";
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
             Response<string> response = new Response<string>();
-            response = DBM.execute(new DatabaseCommandCount(), Query);
+            response = UDBM.execute(new DatabaseCommandCount(), Query);
             if (response.Data == "1")
             {
                 return true;
@@ -93,9 +118,9 @@ namespace ToDoList.Model
         private Boolean SaveAuthenticationKey()
         {
             string Query = "INSERT INTO tempkeys(AuthenticationKey, Expiry, UserId) values('" + AuthenticationKey + "','" + DateTime.UtcNow.AddMinutes(30).ToString("yyyy-MM-ddTHH:mm:ssZ") + "','" + _UserId+"');";
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
             Response<string> response = new Response<string>();
-            response = DBM.execute(new DatabaseCommandInsert(), Query);
+            response = UDBM.execute(new DatabaseCommandInsert(), Query);
             if (response.Data == "1")
             {
                 return true;
@@ -109,9 +134,9 @@ namespace ToDoList.Model
         private Boolean RemoveExpiredKeys()
         {
             string Query = "DELETE FROM tempkeys WHERE Expiry < '" + DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss") + "';";
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
             Response<string> response = new Response<string>();
-            response = DBM.execute(new DatabaseCommandDelete(), Query);
+            response = UDBM.execute(new DatabaseCommandDelete(), Query);
             if (response.Success)
             {
                 return true;
@@ -125,9 +150,9 @@ namespace ToDoList.Model
         private Boolean RemoveDuplicateKeys()
         {
             string Query = "DELETE FROM tempkeys WHERE UserId = " + _UserId + ";";
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
             Response<string> response = new Response<string>();
-            response = DBM.execute(new DatabaseCommandDelete(), Query);
+            response = UDBM.execute(new DatabaseCommandDelete(), Query);
             if (response.Success)
             {
                 return true;
@@ -164,9 +189,9 @@ namespace ToDoList.Model
         private bool AuthenticationKeyIsValid(string AuthKey)
         {
             string Query = "SELECT COUNT(*) FROM tempkeys WHERE AuthenticationKey = '" + AuthKey + "';";
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
             Response<string> response = new Response<string>();
-            response = DBM.execute(new DatabaseCommandCount(), Query);
+            response = UDBM.execute(new DatabaseCommandCount(), Query);
             if(response.Data == "1")
             {
                 return true;
@@ -180,9 +205,9 @@ namespace ToDoList.Model
         {
             RemoveExpiredKeys();
             string Query = "DELETE FROM tempkeys WHERE AuthenticationKey = '" + AuthKey + "';";
-            InspectionDatabaseManager DBM = InspectionDatabaseManager.getInstance();
+            UserDatabaseManager UDBM = UserDatabaseManager.getInstance();
             Response<string> response = new Response<string>();
-            response = DBM.execute(new DatabaseCommandDelete(), Query);
+            response = UDBM.execute(new DatabaseCommandDelete(), Query);
             if (response.Success)
             {
                 response.GenericSuccessCode();
